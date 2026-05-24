@@ -86,7 +86,7 @@ def generate_api_key(request: Request):
         response_model=PaginatedResponseModel
     )
 @limiter.limit("60/minute")
-def get_students(request: Request, user = Depends(verify_key) ,name: str = None, base_name: str = None, limit: int = 20, skip: int = 0, filters: StudentFilter = Depends()):
+def get_students(request: Request, user = Depends(verify_key) ,name: str | None = None, base_name: str | None = None, limit: int = 20, skip: int = 0, filters: StudentFilter = Depends()):
     try:
         cache_key = f"{name}:{base_name}:{limit}:{skip}:{filters}"
 
