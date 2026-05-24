@@ -1,6 +1,5 @@
 from pydantic import BaseModel, Field
 from typing import Optional, Literal
-from docs_and_examples import doc_list
 
 class Terrain(BaseModel):
     urban_terrain: Optional[str]
@@ -31,12 +30,6 @@ class PaginatedResponseModel(BaseModel):
     students: list[StudentResponse]
 
 class CalcRequest(BaseModel):
-    model_config = {
-        "json_schema_extra": {
-            "example": doc_list["gacha-calculate"]["example"]
-        }
-    }
-
     pyroxene: int = Field(..., ge=0)
     rate_up: float = Field(0.007, gt=0, lt=1)
 
@@ -46,14 +39,8 @@ class CalcResponse(BaseModel):
     pulls_to_spark: int
     chance_get_rate_up_naturally: float
     chance_need_spark: float
-
+    
 class GachaPullSimulationRequest(BaseModel):
-    model_config = {
-        "json_schema_extra": {
-            "example": doc_list["gacha-simulate"]["example"]
-        }
-    }
-
     simulations: int = Field(..., gt=0, le=10000)
     pyroxene: int = Field(..., ge=0)
     rate_up: float = Field(0.007, gt=0, lt=1)
@@ -76,12 +63,6 @@ class GachaPullSimulationResponse(BaseModel):
     average_off_banner_3stars: float
 
 class AnalyzePullsRequest(BaseModel):
-    model_config = {
-        "json_schema_extra": {
-            "example": doc_list["analyze-pulls"]["example"]
-        }
-    }
-
     probability: float = Field(..., ge=0, le=1)
     rate_up: float = Field(0.007, gt=0, le=1)
 
