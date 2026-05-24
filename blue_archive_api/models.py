@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import Optional, Literal
+from docs_and_examples import doc_list
 
 class Terrain(BaseModel):
     urban_terrain: Optional[str]
@@ -32,10 +33,7 @@ class PaginatedResponseModel(BaseModel):
 class CalcRequest(BaseModel):
     model_config = {
         "json_schema_extra": {
-            "example": {
-                "pyroxene": 24000,
-                "rate_up": 0.007
-            }
+            "example": doc_list["gacha-calculate"]["example"]
         }
     }
 
@@ -52,14 +50,7 @@ class CalcResponse(BaseModel):
 class GachaPullSimulationRequest(BaseModel):
     model_config = {
         "json_schema_extra": {
-            "example": {
-                "simulations": 100,
-                "pyroxene": 24000,
-                "rate_up": 0.007,
-                "rate_up_3_star": 0.03,
-                "pity_threshold": 100,
-                "spark_threshold": 200
-            }
+            "example": doc_list["gacha-simulate"]["example"]
         }
     }
 
@@ -87,10 +78,7 @@ class GachaPullSimulationResponse(BaseModel):
 class AnalyzePullsRequest(BaseModel):
     model_config = {
         "json_schema_extra": {
-            "example": {
-                "probability": 0.8,
-                "rate_up": 0.007
-            }
+            "example": doc_list["analyze-pulls"]["example"]
         }
     }
 
