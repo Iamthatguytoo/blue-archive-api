@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, Request
+from fastapi import FastAPI, Depends, HTTPException, Request, Body
 import uvicorn as uv
 from models import StudentFilter, CalcRequest, CalcResponse, GachaPullSimulationRequest, GachaPullSimulationResponse, PaginatedResponseModel, AnalyzePullsRequest, AnalyzePullsResponse
 from auth.create_random_key import generate_key
@@ -9,6 +9,7 @@ from services.gacha_calculate import calculate_gacha
 from services.gacha_simulate import simulate_gacha
 from services.analyze_pulls import pull_target
 from services.cache_requests import set_cache, get_cache
+from docs_and_examples import doc_list
 import logging
 import os
 import time
@@ -40,8 +41,8 @@ async def log_request(request: Request, call_next):
 ##Basic welcome page endpoint
 @server.get(
         "/",
-        summary="Basic landing page when searching for this API",
-        response_description="Greets you and checks if its running, shows you directions, and credits for creator of the API and the source for data"
+        summary=doc_list["/"]["summary"],
+        response_description=doc_list["/"]["response_description"]
     )
 def show_api_working():
     try: 
@@ -61,8 +62,8 @@ def show_api_working():
 @server.post(
         "/auth/register",
         tags=["keys"],
-        summary="Self serve endpoint to create keys",
-        response_description="Prints out a key that contains 'sk_' and another 32 characters after that"
+        summary=doc_list["keys"]["summary"],
+        response_description=doc_list["keys"]["response_description"]
     )
 @limiter.limit("2/hour")
 def generate_api_key(request: Request):
@@ -80,8 +81,8 @@ def generate_api_key(request: Request):
 @server.get(
         "/students", 
         tags=["students"], 
-        summary="Search for specific students with their stats in game", 
-        response_description="Paginated list of students with their combat stats, equipment, affiliations, and terrain ratings", 
+        summary=doc_list["students"]["summary"], 
+        response_description=doc_list["students"]["response_description"], 
         response_model=PaginatedResponseModel
     )
 @limiter.limit("60/minute")
@@ -115,12 +116,12 @@ def get_students(request: Request, user = Depends(verify_key) ,name: str = None,
 @server.post(
         "/gacha-calculate", 
         tags=["gacha"],
-        summary="Calculate gacha pull probabilities and spark progress based on available pyroxene",
-        response_description="Returns the total number of pulls, spark eligibility, remaining pulls needed to spark, probability of obtaining the rate-up naturally, and probability of requiring a spark",
+        summary=doc_list["gacha-calculate"]["summary"],
+        response_description=doc_list["gacha-calculate"]["response_description"],
         response_model=CalcResponse
     )
 @limiter.limit("15/minute")
-def calculate_odds(request: Request, pyroxene: CalcRequest, user = Depends(verify_key)):
+def calculate_odds(request: Request, pyroxene: CalcRequest = Body(example=doc_list["gacha-calculate"]["example"]), user = Depends(verify_key)):
     try:
         result = calculate_gacha(
             pyroxene=pyroxene.pyroxene,
@@ -135,12 +136,12 @@ def calculate_odds(request: Request, pyroxene: CalcRequest, user = Depends(verif
 @server.post(
         "/gacha-simulate",
         tags=["gacha"],
-        summary="Run Monte Carlo simulations to estimate gacha outcomes, spark frequency, and pull statistics",
-        response_description="Returns simulation statistics including success rate, average and median pulls to success, spark occurrences, rate-up acquisition count, off-banner 3-star averages, and overall pull distribution metrics", 
+        summary=doc_list["gacha-simulate"]["summary"],
+        response_description=doc_list["gacha-simulate"]["response_description"], 
         response_model=GachaPullSimulationResponse
     )
 @limiter.limit("15/minute")
-def simulate_odds(request: Request, all_pulls: GachaPullSimulationRequest, user = Depends(verify_key)):
+def simulate_odds(request: Request, all_pulls: GachaPullSimulationRequest = Body(example=doc_list["gacha-simulate"]["example"]), user = Depends(verify_key)):
     try:
         result = simulate_gacha(
             simulations=all_pulls.simulations,
@@ -160,12 +161,12 @@ def simulate_odds(request: Request, all_pulls: GachaPullSimulationRequest, user 
 @server.post(
         "/analyze-pulls",
         tags=["gacha"],
-        summary="Calculate the pulls and pyroxene required to reach a target probability of obtaining the rate-up unit",
-        response_description="Returns the estimated number of pulls, required pyroxene, target confidence level, and associated risk category for obtaining the rate-up unit",
+        summary=doc_list["analyze-pulls"]["summary"],
+        response_description=doc_list["analyze-pulls"]["response_description"], 
         response_model=AnalyzePullsResponse
     )
 @limiter.limit("30/minute")
-def target_pulls(request: Request, analyze_pulls: AnalyzePullsRequest, user = Depends(verify_key)):
+def target_pulls(request: Request, analyze_pulls: AnalyzePullsRequest = Body(example=doc_list["analyze-pulls"]["example"]), user = Depends(verify_key)):
     try:
         result = pull_target(
             probability=analyze_pulls.probability,

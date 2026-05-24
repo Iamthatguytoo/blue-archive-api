@@ -30,6 +30,15 @@ class PaginatedResponseModel(BaseModel):
     students: list[StudentResponse]
 
 class CalcRequest(BaseModel):
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "pyroxene": 24000,
+                "rate_up": 0.007
+            }
+        }
+    }
+
     pyroxene: int = Field(..., ge=0)
     rate_up: float = Field(0.007, gt=0, lt=1)
 
@@ -39,8 +48,21 @@ class CalcResponse(BaseModel):
     pulls_to_spark: int
     chance_get_rate_up_naturally: float
     chance_need_spark: float
-    
+
 class GachaPullSimulationRequest(BaseModel):
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "simulations": 100,
+                "pyroxene": 24000,
+                "rate_up": 0.007,
+                "rate_up_3_star": 0.03,
+                "pity_threshold": 100,
+                "spark_threshold": 200
+            }
+        }
+    }
+
     simulations: int = Field(..., gt=0, le=10000)
     pyroxene: int = Field(..., ge=0)
     rate_up: float = Field(0.007, gt=0, lt=1)
@@ -63,6 +85,15 @@ class GachaPullSimulationResponse(BaseModel):
     average_off_banner_3stars: float
 
 class AnalyzePullsRequest(BaseModel):
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "probability": 0.8,
+                "rate_up": 0.007
+            }
+        }
+    }
+
     probability: float = Field(..., ge=0, le=1)
     rate_up: float = Field(0.007, gt=0, le=1)
 
