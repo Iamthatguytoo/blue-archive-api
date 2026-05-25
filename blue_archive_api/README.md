@@ -1,6 +1,6 @@
 # Blue Archive API
 
-A FastAPI-based API for querying Blue Archive students (characters) data, gacha calculations, pull simulations, and probability analysis.
+A Fan-Made FastAPI-based API for querying Blue Archive students (characters) data, gacha calculations, pull simulations, and probability analysis.
 
 
 ## Quick Start
@@ -13,26 +13,26 @@ docker-compose up -d api
 Register an API key:
 
 ```bash
-curl -X POST http://localhost:8000/auth/register
+curl -X POST https://blue-archive-api--JohnArchive.replit.app/auth/register
 ```
 
 or in Windows:
 
 ```powershell
-Invoke-RestMethod -Method POST -Uri "http://localhost:8000/auth/register"
+Invoke-RestMethod -Method POST -Uri "https://blue-archive-api--JohnArchive.replit.app/auth/register"
 ```
 
 Query students:
 
 ```bash
 curl -H "x-api-key: YOUR_KEY" \
-"http://localhost:8000/students?name=Hina"
+"https://blue-archive-api--JohnArchive.replit.app/students?name=Hina"
 ```
 or in Windows:
 
 ```powershell
 Invoke-WebRequest `
-  -Uri "http://localhost:8000/students?name=Hina" `
+  -Uri "https://blue-archive-api--JohnArchive.replit.app/students?name=Hina" `
   -Headers @{ "x-api-key" = "YOUR_API_KEY" }
 ```
 
