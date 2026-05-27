@@ -10,6 +10,8 @@ def simulate_gacha(
         pity_threshold: int,
         spark_threshold: int
         ):
+    if simulations > 1000:
+        raise HTTPException(status_code=400, detail="Simulations cannot exceed 1000")
     total_pulls = []
     total_rate_up_natural = []
     total_off_banner_3_stars = []
@@ -60,7 +62,7 @@ def simulate_gacha(
     success_trials = sum(total_successes) / simulations
     succesful_runs = total_successes.count(True)
     zero_success = total_successes.count(False)
-    average_pulls_to_success = sum(total_pulls) / simulations if total_pulls else 0
+    average_pulls_to_success = (sum(total_pulls) / simulations if simulations > 0 else 0)
     median_pulls_to_success = statistics.median(total_pulls)
     rate_up_natural_count = total_rate_up_natural.count(True)
     average_off_banner_3stars = round(sum(total_off_banner_3_stars) / simulations, 2)

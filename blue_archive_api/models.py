@@ -41,7 +41,7 @@ class CalcResponse(BaseModel):
     chance_need_spark: float
     
 class GachaPullSimulationRequest(BaseModel):
-    simulations: int = Field(..., gt=0, le=10000)
+    simulations: int = Field(..., gt=0, le=1000)
     pyroxene: int = Field(..., ge=0)
     rate_up: float = Field(0.007, gt=0, lt=1)
     rate_up_3_star: float = Field(0.03, gt=0, lt=1)

@@ -58,6 +58,16 @@ def show_api_working():
         logging.error(f"Error: {e}")
         raise HTTPException(status_code=500, detail="Error in server")
 
+## Health check endpoint
+@server.get("/health")
+def health_check():
+    try:
+         return {"status": "healthy"}
+    except Exception as e:
+        logging.error(f"Error: {e}")
+        raise HTTPException(status_code=503, detail="Services are unavailable. Please try again later")
+
+
 ##Create keys for clients endpoint
 @server.post(
         "/auth/register",
@@ -143,6 +153,8 @@ def calculate_odds(request: Request, pyroxene: CalcRequest = Body(example=doc_li
 @limiter.limit("15/minute")
 def simulate_odds(request: Request, all_pulls: GachaPullSimulationRequest = Body(example=doc_list["gacha-simulate"]["example"]), user = Depends(verify_key)):
     try:
+        if all_pulls.simulations > 1000:
+            raise HTTPException(status_code=400, detail="Simulations cannot exceed 1000")
         result = simulate_gacha(
             simulations=all_pulls.simulations,
             pyroxene=all_pulls.pyroxene,

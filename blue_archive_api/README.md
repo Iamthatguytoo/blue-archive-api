@@ -2,38 +2,132 @@
 
 A Fan-Made FastAPI-based API for querying Blue Archive students (characters) data, gacha calculations, pull simulations, and probability analysis.
 
+## Main API Requests
 
-## Quick Start
-
-```bash
-docker-compose run init_db
-docker-compose up -d api
+### Probability format
+All probability values use decimal format
+```Examples
+- 0.007 = 0.7%
+- 0.03 = 3%
+- 0.8 = 80%
 ```
 
-Register an API key:
+## Register an API key:
 
 ```bash
 curl -X POST https://blue-archive-api--JohnArchive.replit.app/auth/register
 ```
 
-or in Windows:
+-or in Windows:
 
 ```powershell
 Invoke-RestMethod -Method POST -Uri "https://blue-archive-api--JohnArchive.replit.app/auth/register"
 ```
 
-Query students:
+## Query students:
 
 ```bash
 curl -H "x-api-key: YOUR_KEY" \
 "https://blue-archive-api--JohnArchive.replit.app/students?name=Hina"
 ```
-or in Windows:
+-or in Windows:
 
 ```powershell
 Invoke-WebRequest `
   -Uri "https://blue-archive-api--JohnArchive.replit.app/students?name=Hina" `
   -Headers @{ "x-api-key" = "YOUR_API_KEY" }
+```
+
+## Calculate Pulls:
+
+```bash
+curl -X POST "https://blue-archive-api--JohnArchive.replit.app/gacha-calculate" \
+-H "Content-Type: application/json" \
+-H "x-api-key: YOUR_API_KEY" \
+-d '{
+  "pyroxene": 24000,
+  "rate_up": 0.007
+}'
+```
+
+-or in Windows:
+
+```powershell
+Invoke-WebRequest `
+-Method POST `
+-Uri "https://blue-archive-api--JohnArchive.replit.app/gacha-calculate" `
+-Headers @{
+  "Content-Type" = "application/json"
+  "x-api-key" = "YOUR_API_KEY"
+} `
+-Body '{
+  "pyroxene": 24000,
+  "rate_up": 0.007
+}'
+```
+
+## Simulate Gacha:
+
+```bash
+curl -X POST "https://blue-archive-api--JohnArchive.replit.app/gacha-simulate" \
+-H "Content-Type: application/json" \
+-H "x-api-key: YOUR_API_KEY" \
+-d '{
+  "simulations": 100,
+  "pyroxene": 24000,
+  "rate_up": 0.007,
+  "rate_up_3_star": 0.03,
+  "pity_threshold": 100,
+  "spark_threshold": 200
+}'
+```
+
+-or in Windows:
+
+```powershell
+Invoke-WebRequest `
+-Method POST `
+-Uri "https://blue-archive-api--JohnArchive.replit.app/gacha-simulate" `
+-Headers @{
+  "Content-Type" = "application/json"
+  "x-api-key" = "YOUR_API_KEY"
+} `
+-Body '{
+  "simulations": 100,
+  "pyroxene": 24000,
+  "rate_up": 0.007,
+  "rate_up_3_star": 0.03,
+  "pity_threshold": 100,
+  "spark_threshold": 200
+}'
+```
+
+## Analyze Pulls:
+
+```bash
+curl -X POST "https://blue-archive-api--JohnArchive.replit.app/analyze-pulls" \
+-H "Content-Type: application/json" \
+-H "x-api-key: YOUR_API_KEY" \
+-d '{
+  "probability": 0.8,
+  "rate_up": 0.007
+}'
+```
+
+-or in Windows:
+
+```powershell
+Invoke-WebRequest `
+-Method POST `
+-Uri "https://blue-archive-api--JohnArchive.replit.app/analyze-pulls" `
+-Headers @{
+  "Content-Type" = "application/json"
+  "x-api-key" = "YOUR_API_KEY"
+} `
+-Body '{
+  "probability": 0.8,
+  "rate_up": 0.007
+}'
 ```
 
 ## Features
@@ -43,77 +137,6 @@ Invoke-WebRequest `
 - Calculate gacha pull probabilities and spark reachability
 - Simulate gacha pulls with statistical analysis
 - Analyze pull targets for desired students
-- Dockerized for easy deployment
-
-## Installation & Setup
-
-### Prerequisites
-- Docker and Docker Compose (for containerized setup)
-- OR Python 3.11+ and MongoDB (for local setup)
-- MongoDB instance running and accessible (local or cloud)
-
- ### Environment Variables
-  Create either:
-    - `.env.local` for local development (MongoDB running on localhost)
-    - `.env.prod` for production/deployment (MongoDB Atlas or remote database)
-
-  Example `.env.local` (for local MongoDB):
-  
-  CLIENT=mongodb://USERNAME:PASSWORD@localhost:27017/?authSource=admin
-  
-  DATABASE=MyStuff
-  
-  API_COLLECTION=blue_archive_students
-  
-  API_COLLECTION_KEYS=blue_archive_api_secret_keys
-
-  Example `.env.prod` (for MongoDB Atlas/remote):
-  
-  CLIENT=mongodb+srv://USERNAME:PASSWORD@cluster0.example.mongodb.net/
-  
-  DATABASE=blue_archive_api
-  
-  API_COLLECTION=blue_archive_students
-  
-  API_COLLECTION_KEYS=api_keys
-
-  ⚠️ **Important**: These files contain sensitive credentials and are:
-  - Excluded from Docker images via `.dockerignore`
-  - Should be added to `.gitignore` to prevent accidental commits
-  - Loaded at runtime by Docker Compose, not baked into images
-
-### Using Docker Compose (Recommended)
-
-#### 1. Initialize Database
-This step scrapes and loads student data into MongoDB.
-Make sure your MongoDB is running and accessible at the connection string specified in secret.env.
-
-```bash
-docker-compose run init_db
-```
-
-Run this again anytime you want to refresh the dataset.
-
-#### 2. Start the API
-```bash
-docker-compose up -d api
-```
-
-The API will be available at:
-http://localhost:8000
-
-
-### Local Setup
-1. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-2. Ensure MongoDB is running and accessible
-3. Set environment variables in `secret.env` (adjust CLIENT for local MongoDB if needed)
-4. Run the API:
-   ```bash
-   uvicorn blue_archive_characters_api:server --host 0.0.0.0 --port 8000
-   ```
 
 ## API Endpoints
 
@@ -150,52 +173,11 @@ http://localhost:8000
   - Body: `AnalyzePullsRequest` (probability: float, rate_up: float)
   - Returns: `AnalyzePullsResponse` with required pulls, pyroxene needed, confidence, and risk level
 
-## Project Structure
-```
-blue_archive_api/
-├── blue_archive_characters_api.py   # Main FastAPI application
-├── models.py                        # Pydantic models
-├── requirements.txt                 # Python dependencies
-├── Dockerfile                       # Container definition (Currently unused in production)
-├── docker-compose.yaml              # Service orchestration (Currently unused in production)
-├── secret.env                       # Backup environment variables (not in repo)
-├── .env.local                       # Local environment variables (not in repo)
-├── .env.prod                        # Production environment variables (not in repo)
-├── auth/                            # Authentication utilities
-│   ├── create_random_key.py
-│   └── key_verification.py
-├── middleware/                      # Request/response middleware components
-|   └── rate_limit.py
-├── db/                              # Database connection and data Scraper
-│   ├── database.py
-|   └── blue_archive_characters.py   
-├── services/                        # Business logic modules
-│   ├── retrieve_students.py
-│   ├── gacha_calculate.py
-│   ├── gacha_simulate.py
-|   ├── cache_requests.py 
-│   └── analyze_pulls.py
-├── get_request_test.py              # Legacy test script
-└── docs_and_examples.py             # API descriptions and usage examples
-```
-
 ## Notes
 - The API key is only shown once upon generation - store it securely
 - All protected endpoints require the `x-api-key` header with a valid key
 - The Docker container includes Playwright Chromium (currently unused but available for future web scraping needs)
 - Student data must be present in the MongoDB collection for the `/students` endpoint to return results
-
-## Testing(Legacy)
-A simple test script is available at `get_request_test.py` that:
-1. Starts the API server in a background thread
-2. Waits for server initialization
-3. Makes a test request to the `/gacha-simulate` endpoint
-4. Prints the results as a pandas DataFrame
-
-Run with:
-```bash
-python get_request_test.py
-```
 
 ## Data Source
 
@@ -208,10 +190,3 @@ Data is transformed into a structured API format with filtering, pagination, and
 This project is an unofficial fan-made API and is not affiliated with Nexon, NAT Games, or the Blue Archive Wiki team.
 
 If any maintainers or rights holders would like content modified or removed, please open an issue or contact the project maintainer.
-
-## TO BE UPDATED
-
-```
-Valkey Caching 
-Update to README.md because of newly added/updated files
-```
