@@ -7,7 +7,7 @@ def serialize_student(doc: dict) -> dict:
         doc["class_name"] = doc.pop("class")
     return doc
 
-def fetch_students( filters: BaseModel, name: str = None, base_name: str = None, limit: int = 20, skip: int = 0):
+def fetch_students( filters: BaseModel, name: str | None = None, base_name: str | None = None, limit: int = 20, skip: int = 0):
     query = {}
     if name:
         query['name'] = {"$regex": f"^{name}(\\s|$)", "$options": "i"}

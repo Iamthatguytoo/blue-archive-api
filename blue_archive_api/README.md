@@ -58,15 +58,23 @@ Invoke-WebRequest `
     - `.env.prod` for production/deployment (MongoDB Atlas or remote database)
 
   Example `.env.local` (for local MongoDB):
-  CLIENT=mongodb://DevUser:DevPass1234@localhost:27017/?authSource=admin
+  
+  CLIENT=mongodb://USERNAME:PASSWORD@localhost:27017/?authSource=admin
+  
   DATABASE=MyStuff
+  
   API_COLLECTION=blue_archive_students
+  
   API_COLLECTION_KEYS=blue_archive_api_secret_keys
 
   Example `.env.prod` (for MongoDB Atlas/remote):
-  CLIENT=mongodb+srv://<username>:<password>@cluster0.example.mongodb.net/
+  
+  CLIENT=mongodb+srv://USERNAME:PASSWORD@cluster0.example.mongodb.net/
+  
   DATABASE=blue_archive_api
+  
   API_COLLECTION=blue_archive_students
+  
   API_COLLECTION_KEYS=api_keys
 
   ⚠️ **Important**: These files contain sensitive credentials and are:
@@ -148,20 +156,27 @@ blue_archive_api/
 ├── blue_archive_characters_api.py   # Main FastAPI application
 ├── models.py                        # Pydantic models
 ├── requirements.txt                 # Python dependencies
-├── Dockerfile                       # Container definition
-├── docker-compose.yaml              # Service orchestration
-├── secret.env                       # Environment variables (not in repo)
-├── auth/                            # Authentication modules
+├── Dockerfile                       # Container definition (Currently unused in production)
+├── docker-compose.yaml              # Service orchestration (Currently unused in production)
+├── secret.env                       # Backup environment variables (not in repo)
+├── .env.local                       # Local environment variables (not in repo)
+├── .env.prod                        # Production environment variables (not in repo)
+├── auth/                            # Authentication utilities
 │   ├── create_random_key.py
 │   └── key_verification.py
-├── db/                              # Database connection
-│   └── database.py
-├── services/                        # Business logic
+├── middleware/                      # Request/response middleware components
+|   └── rate_limit.py
+├── db/                              # Database connection and data Scraper
+│   ├── database.py
+|   └── blue_archive_characters.py   
+├── services/                        # Business logic modules
 │   ├── retrieve_students.py
 │   ├── gacha_calculate.py
 │   ├── gacha_simulate.py
+|   ├── cache_requests.py 
 │   └── analyze_pulls.py
-└── get_request_test.py              # Simple test script
+├── get_request_test.py              # Legacy test script
+└── docs_and_examples.py             # API descriptions and usage examples
 ```
 
 ## Notes
@@ -170,7 +185,7 @@ blue_archive_api/
 - The Docker container includes Playwright Chromium (currently unused but available for future web scraping needs)
 - Student data must be present in the MongoDB collection for the `/students` endpoint to return results
 
-## Testing
+## Testing(Legacy)
 A simple test script is available at `get_request_test.py` that:
 1. Starts the API server in a background thread
 2. Waits for server initialization
@@ -193,3 +208,10 @@ Data is transformed into a structured API format with filtering, pagination, and
 This project is an unofficial fan-made API and is not affiliated with Nexon, NAT Games, or the Blue Archive Wiki team.
 
 If any maintainers or rights holders would like content modified or removed, please open an issue or contact the project maintainer.
+
+## TO BE UPDATED
+
+```
+Valkey Caching 
+Update to README.md because of newly added/updated files
+```
