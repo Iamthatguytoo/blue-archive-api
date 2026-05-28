@@ -1,10 +1,7 @@
-# Python-generated files
-__pycache__/
-*.py[oc]
-build/
-dist/
-wheels/
-*.egg-info
-
-# Virtual environments
-.venv
+__pycache__
+Dockerfile
+docker-compose.yaml
+__init__.py
+.pyc
+.replit
+.dockerignore
