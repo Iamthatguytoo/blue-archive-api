@@ -8,7 +8,7 @@ This repository is intended for demonstration purposes only.
 It is not a complete or production-ready package, and may be missing configuration or dependencies required for deployment.
 
 
-## Announcement
+## API Status
 ```
 -API link: https://blue-archive-api--JohnArchive.replit.app
 -Server status: offline 🔴
