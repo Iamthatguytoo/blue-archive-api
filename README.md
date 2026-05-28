@@ -184,11 +184,14 @@ Invoke-WebRequest `
   - Body: `AnalyzePullsRequest` (probability: float, rate_up: float)
   - Returns: `AnalyzePullsResponse` with required pulls, pyroxene needed, confidence, and risk level
 
+### Docs
+- Interactive API docs are available at:
+  -/docs
+  -/redoc 
+
 ## Notes
 - The API key is only shown once upon generation - store it securely
 - All protected endpoints require the `x-api-key` header with a valid key
-- The Docker container includes Playwright Chromium (currently unused but available for future web scraping needs)
-- Student data must be present in the MongoDB collection for the `/students` endpoint to return results
 
 ## Data Source
 
