@@ -152,9 +152,9 @@ def calculate_odds(request: Request, pyroxene: CalcRequest = Body(example=doc_li
     )
 @limiter.limit("15/minute")
 def simulate_odds(request: Request, all_pulls: GachaPullSimulationRequest = Body(example=doc_list["gacha-simulate"]["example"]), user = Depends(verify_key)):
+    if all_pulls.simulations > 1000:
+        raise HTTPException(status_code=400, detail="Simulations cannot exceed 1000")
     try:
-        if all_pulls.simulations > 1000:
-            raise HTTPException(status_code=400, detail="Simulations cannot exceed 1000")
         result = simulate_gacha(
             simulations=all_pulls.simulations,
             pyroxene=all_pulls.pyroxene,

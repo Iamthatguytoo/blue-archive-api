@@ -160,7 +160,7 @@ Invoke-WebRequest `
 ### Gacha Simulation
 - `POST /gacha-simulate` - Simulate gacha pulls
   - Body: `GachaPullSimulationRequest`
-    - simulations: int (1-10000)
+    - simulations: int (1-1000)
     - pyroxene: int
     - rate_up: float (0-1)
     - rate_up_3_star: float (0-1)
