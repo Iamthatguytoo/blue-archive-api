@@ -2,6 +2,13 @@
 
 A Fan-Made FastAPI-based API for querying Blue Archive students (characters) data, gacha calculations, pull simulations, and probability analysis.
 
+## Announcement
+```
+This repo is meant for demonstration purposes only. Forking or pulling this repo is not advised.
+```
+```
+Server status: offline 🔴
+```
 ## Main API Requests
 
 ### Probability format
