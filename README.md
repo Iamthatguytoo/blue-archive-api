@@ -15,7 +15,7 @@ It is not a complete or production-ready package, and may be missing configurati
 ```
 ## Main API Requests
 
-### Probability format
+#### Probability format
 All probability values use decimal format
 ```Examples
 - 0.007 = 0.7%
@@ -23,7 +23,7 @@ All probability values use decimal format
 - 0.8 = 80%
 ```
 
-## Register an API key:
+### Register an API key:
 
 ```bash
 curl -X POST https://blue-archive-api--JohnArchive.replit.app/auth/register
@@ -35,7 +35,7 @@ curl -X POST https://blue-archive-api--JohnArchive.replit.app/auth/register
 Invoke-RestMethod -Method POST -Uri "https://blue-archive-api--JohnArchive.replit.app/auth/register"
 ```
 
-## Query students:
+### Query students:
 
 ```bash
 curl -H "x-api-key: YOUR_KEY" \
@@ -49,7 +49,7 @@ Invoke-WebRequest `
   -Headers @{ "x-api-key" = "YOUR_API_KEY" }
 ```
 
-## Calculate Pulls:
+### Calculate Pulls:
 
 ```bash
 curl -X POST "https://blue-archive-api--JohnArchive.replit.app/gacha-calculate" \
@@ -77,7 +77,7 @@ Invoke-WebRequest `
 }'
 ```
 
-## Simulate Gacha:
+### Simulate Gacha:
 
 ```bash
 curl -X POST "https://blue-archive-api--JohnArchive.replit.app/gacha-simulate" \
@@ -113,7 +113,7 @@ Invoke-WebRequest `
 }'
 ```
 
-## Analyze Pulls:
+### Analyze Pulls:
 
 ```bash
 curl -X POST "https://blue-archive-api--JohnArchive.replit.app/analyze-pulls" \
