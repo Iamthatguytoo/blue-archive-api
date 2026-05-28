@@ -1,7 +1,0 @@
-get_request_test.py
-secret.env
-.env.local
-.env.prod
-__pycache__/
-*.pyc
-__init__.py
