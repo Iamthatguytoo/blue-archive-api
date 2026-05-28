@@ -1,8 +1,11 @@
-# Blue Archive API
+# Fan Made Blue Archive API
 
 A Fan-Made FastAPI-based API for querying Blue Archive students (characters) data, gacha calculations, pull simulations, and probability analysis.
 
 ## Announcement
+```
+API link: https://blue-archive-api--JohnArchive.replit.app
+```
 ```
 This repository is intended for demonstration purposes only.
 It is not a complete or production-ready package, and may be missing configuration or dependencies required for deployment.
