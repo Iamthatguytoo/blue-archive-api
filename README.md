@@ -186,8 +186,8 @@ Invoke-WebRequest `
 
 ### Docs
 - Interactive API docs are available at:
-  -/docs
-  -/redoc 
+  - /docs
+  - /redoc 
 
 ## Notes
 - The API key is only shown once upon generation - store it securely
