@@ -7,6 +7,8 @@ A Fan-Made FastAPI-based API for querying Blue Archive students (characters) dat
 This repository is intended for demonstration purposes only.
 It is not a complete or production-ready package, and may be missing configuration or dependencies required for deployment.
 
+## Project Status
+Experimental
 
 ## API Status
 ```
