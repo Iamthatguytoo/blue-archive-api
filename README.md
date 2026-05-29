@@ -11,7 +11,7 @@ It is not a complete or production-ready package, and may be missing configurati
 ## API Status
 ```
 -API link: https://blue-archive-api--JohnArchive.replit.app
--Server status: offline 🔴
+-Server status: online 🟢
 ```
 
 ## Features
