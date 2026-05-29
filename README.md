@@ -13,6 +13,15 @@ It is not a complete or production-ready package, and may be missing configurati
 -API link: https://blue-archive-api--JohnArchive.replit.app
 -Server status: offline 🔴
 ```
+
+## Features
+
+- Retrieve student data from MongoDB with filtering and pagination
+- Generate and verify API keys for secure access
+- Calculate gacha pull probabilities and spark reachability
+- Simulate gacha pulls with statistical analysis
+- Analyze pull targets for desired students
+
 ## Main API Requests
 
 #### Probability format
@@ -21,6 +30,15 @@ All probability values use decimal format
 - 0.007 = 0.7%
 - 0.03 = 3%
 - 0.8 = 80%
+```
+
+#### Rate limit
+Each endpoint has a limit per minute or hour:
+```
+- /auth/register: 2/hour
+- /students: 60/minute
+- /gacha-calculate and /gacha-simulate: 15/minute
+- /analyze-pulls: 30/minute
 ```
 
 ### Register an API key:
@@ -35,6 +53,21 @@ curl -X POST https://blue-archive-api--JohnArchive.replit.app/auth/register
 Invoke-RestMethod -Method POST -Uri "https://blue-archive-api--JohnArchive.replit.app/auth/register"
 ```
 
+<details>
+<summary>- Example output:</summary>
+
+```json
+{
+  "api_key": "sk_********************************",
+  "daily_limit": 1000,
+  "tier": "free",
+  "resetted_at": "2026-XX-XX",
+  "message": "Copy this string now. You wont see it again"
+}
+```
+
+</details>
+
 ### Query students:
 
 ```bash
@@ -48,6 +81,74 @@ Invoke-WebRequest `
   -Uri "https://blue-archive-api--JohnArchive.replit.app/students?name=Hina" `
   -Headers @{ "x-api-key" = "YOUR_API_KEY" }
 ```
+<details>
+<summary>- Example output:</summary>
+  
+```json
+{
+  "total": 3,
+  "skip": 0,
+  "limit": 20,
+  "students": [
+    {
+      "name": "Hina (Dress)",
+      "base_name": "Hina",
+      "rarity": "3",
+      "variant": "dress",
+      "damage_type": "explosive",
+      "armor_type": "elastic",
+      "class_name": "striker",
+      "school": "gehenna",
+      "position": "back",
+      "weapon": "mg",
+      "pool": "anniversary",
+      "terrain": {
+        "urban_terrain": "D",
+        "outdoor_terrain": "A",
+        "indoor_terrain": "S"
+      }
+    },
+    {
+      "name": "Hina (Swimsuit)",
+      "base_name": "Hina",
+      "rarity": "3",
+      "variant": "swimsuit",
+      "damage_type": "explosive",
+      "armor_type": "heavy",
+      "class_name": "striker",
+      "school": "gehenna",
+      "position": "back",
+      "weapon": "mg",
+      "pool": "limited",
+      "terrain": {
+        "urban_terrain": "B",
+        "outdoor_terrain": "S",
+        "indoor_terrain": "D"
+      }
+    },
+    {
+      "name": "Hina",
+      "base_name": "Hina",
+      "rarity": "3",
+      "variant": "none",
+      "damage_type": "explosive",
+      "armor_type": "heavy",
+      "class_name": "striker",
+      "school": "gehenna",
+      "position": "back",
+      "weapon": "mg",
+      "pool": "archive",
+      "terrain": {
+        "urban_terrain": "S",
+        "outdoor_terrain": "C",
+        "indoor_terrain": "C"
+      }
+    }
+  ]
+}
+```
+
+</details>
 
 ### Calculate Pulls:
 
@@ -76,6 +177,21 @@ Invoke-WebRequest `
   "rate_up": 0.007
 }'
 ```
+
+<details>
+<summary>- Example output:</summary>
+
+```json
+{
+  "pulls": 200,
+  "spark_reachable": true,
+  "pulls_to_spark": 0,
+  "chance_get_rate_up_naturally": 75.461405,
+  "chance_need_spark": 24.538595
+}
+```
+
+</details>
 
 ### Simulate Gacha:
 
@@ -113,6 +229,28 @@ Invoke-WebRequest `
 }'
 ```
 
+<details>
+<summary>- Example output:</summary>
+
+```json
+{
+  "simulations_conducted": 100,
+  "pulls_per_trial": 200,
+  "success_rate": 1,
+  "average_pulls_to_success": 119.09,
+  "median_pulls_to_success": 124.5,
+  "succesful_runs": 100,
+  "zero_success": 0,
+  "trials_reached_spark": 26,
+  "max_pulls": 200,
+  "min_pulls": 2,
+  "rate_up_obtained": 74,
+  "average_off_banner_3stars": 2.77
+}
+```
+
+</details>
+
 ### Analyze Pulls:
 
 ```bash
@@ -141,13 +279,19 @@ Invoke-WebRequest `
 }'
 ```
 
-## Features
+<details>
+<summary>- Example output:</summary>
 
-- Retrieve student data from MongoDB with filtering and pagination
-- Generate and verify API keys for secure access
-- Calculate gacha pull probabilities and spark reachability
-- Simulate gacha pulls with statistical analysis
-- Analyze pull targets for desired students
+```json
+{
+  "required_pulls": 230,
+  "pyroxene_needed": 27600,
+  "confidence": 0.8,
+  "risk_level": "moderate"
+}
+```
+
+</details>
 
 ## API Endpoints
 
