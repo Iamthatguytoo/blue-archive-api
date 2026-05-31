@@ -83,6 +83,8 @@ def generate_api_key(request: Request):
             **api_key_data,
             "message": "Copy this string now. You wont see it again"
         }
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error: {e}")
         raise HTTPException(status_code=500, detail=f"Error: {e}")
@@ -118,6 +120,8 @@ def get_students(request: Request, user = Depends(verify_key) ,name: str | None 
         set_cache(cache_key, result)
 
         return PaginatedResponseModel(**result)
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error: {e}")
         raise HTTPException(status_code=500, detail="Error in server")
@@ -138,6 +142,8 @@ def calculate_odds(request: Request, pyroxene: CalcRequest = Body(example=doc_li
             rate_up=pyroxene.rate_up
         )
         return CalcResponse(**result)
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error: {e}")
         raise HTTPException(status_code=500, detail="Error in server")
@@ -165,6 +171,8 @@ def simulate_odds(request: Request, all_pulls: GachaPullSimulationRequest = Body
         )
 
         return GachaPullSimulationResponse(**result)
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error: {e}")
         raise HTTPException(status_code=500, detail="Error in server")
@@ -186,6 +194,8 @@ def target_pulls(request: Request, analyze_pulls: AnalyzePullsRequest = Body(exa
         )
 
         return AnalyzePullsResponse(**result)
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error: {e}")
         raise HTTPException(status_code=500, detail="Error in server")
