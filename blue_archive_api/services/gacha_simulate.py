@@ -60,10 +60,11 @@ def simulate_gacha(
     min_pulls = min(total_pulls)
 
     success_trials = sum(total_successes) / simulations
-    succesful_runs = total_successes.count(True)
+    successful_runs = total_successes.count(True)
     zero_success = total_successes.count(False)
-    average_pulls_to_success = (sum(total_pulls) / simulations if simulations > 0 else 0)
-    median_pulls_to_success = statistics.median(total_pulls)
+    successful_pull_counts = [pulls for pulls, success in zip(total_pulls, total_successes) if success]
+    average_pulls_to_success = (sum(successful_pull_counts) / len(successful_pull_counts) if successful_pull_counts else None)
+    median_pulls_to_success = (statistics.median(successful_pull_counts) if successful_pull_counts else None)
     rate_up_natural_count = total_rate_up_natural.count(True)
     average_off_banner_3stars = round(sum(total_off_banner_3_stars) / simulations, 2)
 
@@ -71,13 +72,13 @@ def simulate_gacha(
         "simulations_conducted": simulations,
         "pulls_per_trial": pulls_per_trial,
         "success_rate": success_trials,
-        "average_pulls_to_success": round(average_pulls_to_success, 2),
-        "median_pulls_to_success": round(median_pulls_to_success, 2),
-        "succesful_runs": succesful_runs,
+        "average_pulls_to_success": (round(average_pulls_to_success, 2) if average_pulls_to_success is not None else None),
+        "median_pulls_to_success": (round(median_pulls_to_success, 2) if median_pulls_to_success is not None else None),
+        "successful_runs": successful_runs,
         "zero_success": zero_success,
         "trials_reached_spark": spark_count,
         "max_pulls": max_pulls,
         "min_pulls": min_pulls,
-        "rate_up_obtained": rate_up_natural_count,
+        "natural_rate_up_obtained": rate_up_natural_count,
         "average_off_banner_3stars": average_off_banner_3stars
     }
