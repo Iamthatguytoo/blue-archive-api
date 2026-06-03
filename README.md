@@ -238,18 +238,20 @@ Invoke-WebRequest `
 {
   "simulations_conducted": 100,
   "pulls_per_trial": 200,
-  "success_rate": 1,
+  "success_rate": 1, 
   "average_pulls_to_success": 119.09,
   "median_pulls_to_success": 124.5,
-  "succesful_runs": 100,
+  "successful_runs": 100,
   "zero_success": 0,
   "trials_reached_spark": 26,
   "max_pulls": 200,
   "min_pulls": 2,
-  "rate_up_obtained": 74,
+  "natural_rate_up_obtained": 74,
   "average_off_banner_3stars": 2.77
 }
 ```
+
+Note: Success in success_rate includes both obtaining the target naturally or reaching spark
 
 </details>
 
