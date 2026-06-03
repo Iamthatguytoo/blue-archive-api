@@ -54,12 +54,12 @@ class GachaPullSimulationResponse(BaseModel):
     success_rate: float
     average_pulls_to_success: float
     median_pulls_to_success: float
-    succesful_runs: int
+    successful_runs: int
     zero_success: int
     trials_reached_spark: int
     max_pulls: int
     min_pulls: int
-    rate_up_obtained: int
+    natural_rate_up_obtained: int
     average_off_banner_3stars: float
 
 class AnalyzePullsRequest(BaseModel):
