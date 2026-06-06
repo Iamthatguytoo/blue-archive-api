@@ -1,25 +1,25 @@
 from pydantic import BaseModel, Field
-from typing import Optional, Literal
+from typing import Literal
 
 class Terrain(BaseModel):
-    urban_terrain: Optional[str]
-    outdoor_terrain: Optional[str]
-    indoor_terrain: Optional[str]
+    urban_terrain: str | None = None
+    outdoor_terrain: str | None = None
+    indoor_terrain: str | None = None
 
 class StudentResponse(BaseModel):
-    name: str
-    base_name: str
-    rarity: Optional[str]
-    variant: Optional[str]
+    name: str | None = None
+    base_name: str | None = None
+    rarity: str | None = None
+    variant: str | None = None
 
-    damage_type: Optional[str]
-    armor_type: Optional[str]
-    class_name: Optional[str]
+    damage_type: str | None = None
+    armor_type: str | None = None
+    class_name: str | None = None
 
-    school: Optional[str]
-    position: Optional[str]
-    weapon: Optional[str]
-    pool: Optional[str]
+    school: str | None = None
+    position: str | None = None
+    weapon: str | None = None
+    pool: str | None = None
 
     terrain: Terrain
 
@@ -73,6 +73,6 @@ class AnalyzePullsResponse(BaseModel):
     risk_level: Literal["low", "moderate", "high"]
 
 class StudentFilter(BaseModel):
-    school: Optional[str] = None
-    position: Optional[str] = None
-    damage_type: Optional[str] = None
+    school: str | None = None
+    position: str | None = None
+    damage_type: str | None = None
