@@ -88,46 +88,10 @@ Invoke-WebRequest `
   
 ```json
 {
-  "total": 3,
+  "total": 1,
   "skip": 0,
   "limit": 20,
   "students": [
-    {
-      "name": "Hina (Dress)",
-      "base_name": "Hina",
-      "rarity": "3",
-      "variant": "dress",
-      "damage_type": "explosive",
-      "armor_type": "elastic",
-      "class_name": "striker",
-      "school": "gehenna",
-      "position": "back",
-      "weapon": "mg",
-      "pool": "anniversary",
-      "terrain": {
-        "urban_terrain": "D",
-        "outdoor_terrain": "A",
-        "indoor_terrain": "S"
-      }
-    },
-    {
-      "name": "Hina (Swimsuit)",
-      "base_name": "Hina",
-      "rarity": "3",
-      "variant": "swimsuit",
-      "damage_type": "explosive",
-      "armor_type": "heavy",
-      "class_name": "striker",
-      "school": "gehenna",
-      "position": "back",
-      "weapon": "mg",
-      "pool": "limited",
-      "terrain": {
-        "urban_terrain": "B",
-        "outdoor_terrain": "S",
-        "indoor_terrain": "D"
-      }
-    },
     {
       "name": "Hina",
       "base_name": "Hina",
@@ -305,8 +269,8 @@ Invoke-WebRequest `
 ### Student Data
 - `GET /students` - Retrieve paginated student data with filtering
   - Query Parameters:
-    - `name` (string): Filter by student name (regex prefix match)
-    - `base_name` (string): Filter by base name (exact match)
+    - `name` (string): Case-insensitive exact match (e.g., `name=Arisu (Armed)` specifically returns `Arisu (Armed)`).
+    - `base_name` (string): Case-insensitive exact match with partial-match fallback if no exact matches exist (e.g., `base_name=Arisu` returns all of the variants/alts of `Arisu`).
     - `limit` (int, default 20): Number of results per page
     - `skip` (int, default 0): Number of results to skip
     - Plus any fields from the `StudentFilter` model (school, position, damage_type, etc.)
