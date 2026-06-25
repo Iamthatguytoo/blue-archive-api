@@ -7,8 +7,8 @@ A Fan-Made FastAPI-based API for querying Blue Archive students (characters) dat
 ## API Status
 
 ```
-API link:      https://blue-archive-api--JohnArchive.replit.app
-Server status: offline 🔴
+API link: https://blue-archive-api--JohnArchive.replit.app
+Server status: online 🟢
 Interactive docs: /docs  or  /redoc
 ```
 
