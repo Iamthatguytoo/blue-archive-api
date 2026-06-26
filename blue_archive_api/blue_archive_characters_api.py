@@ -1,4 +1,6 @@
-from fastapi import FastAPI, Depends, HTTPException, Request, Body
+from fastapi import FastAPI, Depends, Request, Body
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
 import uvicorn as uv
 from models import StudentFilter, CalcRequest, CalcResponse, GachaPullSimulationRequest, GachaPullSimulationResponse, PaginatedResponseModel, AnalyzePullsRequest, AnalyzePullsResponse
 from auth.create_random_key import generate_key
@@ -8,6 +10,7 @@ from services.retrieve_students import fetch_students
 from services.gacha_calculate import calculate_gacha
 from services.gacha_simulate import simulate_gacha
 from services.analyze_pulls import pull_target
+from services.health_check import create_health_check
 from services.cache_requests import set_cache, get_cache
 from docs_and_examples import doc_list
 import logging
@@ -20,6 +23,31 @@ setup_ip_rate_limiting(server=server)
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(levelname)s | %(name)s | %(message)s")
 logger = logging.getLogger("blue-archive-api")
+
+## Global Exception Handler
+@server.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    logger.exception("Unhandled error")
+
+    return JSONResponse(
+        status_code=500,
+        content={
+            "status": "error",
+            "message": "Internal server error"
+        },
+    )
+
+# Global ValidationError Handler
+@server.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    return JSONResponse(
+        status_code=422,
+        content={
+            "status": "error",
+            "message": "Invalid input",
+            "details": exc.errors()
+        },
+    )
 
 ##Log each action middleware
 @server.middleware("http")
@@ -45,28 +73,20 @@ async def log_request(request: Request, call_next):
         response_description=doc_list["/"]["response_description"]
     )
 def show_api_working():
-    try: 
-        return {
-            "message": "Hello! Welcome to the Blue Archive API",
-            "status": "running",
-            "docs": "/docs",
-            "redoc": "/redoc",
-            "created_by(github)": "Iamthatguytoo",
-            "credits": "Character data sourced from Blue Archive Wiki. Retrieved from Blue Archive Wiki Characters page. A big thanks to the Blue Archive Wiki team for their hard work." 
-        }
-    except Exception as e:
-        logging.error(f"Error: {e}")
-        raise HTTPException(status_code=500, detail="Error in server")
+    return {
+        "message": "Hello! Welcome to the Blue Archive API",
+        "status": "running",
+        "docs": "/docs",
+        "redoc": "/redoc",
+        "created_by(github)": "Iamthatguytoo",
+        "credits": "Character data sourced from Blue Archive Wiki. Retrieved from Blue Archive Wiki Characters page. A big thanks to the Blue Archive Wiki team for their hard work." 
+    }
+    
 
 ## Health check endpoint
 @server.get("/health")
 def health_check():
-    try:
-         return {"status": "healthy"}
-    except Exception as e:
-        logging.error(f"Error: {e}")
-        raise HTTPException(status_code=503, detail="Services are unavailable. Please try again later")
-
+    return create_health_check()
 
 ##Create keys for clients endpoint
 @server.post(
@@ -77,17 +97,12 @@ def health_check():
     )
 @limiter.limit("2/hour")
 def generate_api_key(request: Request):
-    try:
-        api_key_data = generate_key()
-        return {
-            **api_key_data,
-            "message": "Copy this string now. You wont see it again"
-        }
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error: {e}")
-        raise HTTPException(status_code=500, detail=f"Error: {e}")
+    
+    api_key_data = generate_key()
+    return {
+        **api_key_data,
+        "message": "Copy this string now. You wont see it again"
+    }
 
 ##Get student data from DB endpoint
 @server.get(
@@ -98,33 +113,28 @@ def generate_api_key(request: Request):
         response_model=PaginatedResponseModel
     )
 @limiter.limit("60/minute")
-def get_students(request: Request, user = Depends(verify_key) ,name: str | None = None, base_name: str | None = None, limit: int = 20, skip: int = 0, filters: StudentFilter = Depends()):
-    try:
-        cache_key = f"{name}:{base_name}:{limit}:{skip}:{filters}"
+def get_students(request: Request, user = Depends(verify_key), name: str | None = None, base_name: str | None = None, limit: int = 20, skip: int = 0, filters: StudentFilter = Depends()):
+    
+    cache_key = f"{name}:{base_name}:{limit}:{skip}:{filters}"
 
-        cached = get_cache(cache_key)
-        if cached:
-           logger.info("CACHE HIT")
-           return PaginatedResponseModel(**cached)
-        
-        logger.info("CACHE MISS")
+    cached = get_cache(cache_key)
+    if cached:
+        logger.info("CACHE HIT")
+        return PaginatedResponseModel(**cached)
+    
+    logger.info("CACHE MISS")
 
-        result = fetch_students(
-            filters=filters,
-            name=name,
-            base_name=base_name,
-            limit=limit,
-            skip=skip
-        )
+    result = fetch_students(
+        filters=filters,
+        name=name,
+        base_name=base_name,
+        limit=limit,
+        skip=skip
+    )
 
-        set_cache(cache_key, result)
+    set_cache(cache_key, result)
 
-        return PaginatedResponseModel(**result)
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error: {e}")
-        raise HTTPException(status_code=500, detail="Error in server")
+    return PaginatedResponseModel(**result)
 
 ##Calculate gacha pulls endpoint
 @server.post(
@@ -136,17 +146,13 @@ def get_students(request: Request, user = Depends(verify_key) ,name: str | None 
     )
 @limiter.limit("15/minute")
 def calculate_odds(request: Request, pyroxene: CalcRequest = Body(example=doc_list["gacha-calculate"]["example"]), user = Depends(verify_key)):
-    try:
-        result = calculate_gacha(
-            pyroxene=pyroxene.pyroxene,
-            rate_up=pyroxene.rate_up
-        )
-        return CalcResponse(**result)
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error: {e}")
-        raise HTTPException(status_code=500, detail="Error in server")
+    
+    result = calculate_gacha(
+        pyroxene=pyroxene.pyroxene,
+        rate_up=pyroxene.rate_up
+    )
+    return CalcResponse(**result)
+    
 
 ##Simulate gacha endpoint
 @server.post(
@@ -158,24 +164,18 @@ def calculate_odds(request: Request, pyroxene: CalcRequest = Body(example=doc_li
     )
 @limiter.limit("15/minute")
 def simulate_odds(request: Request, all_pulls: GachaPullSimulationRequest = Body(example=doc_list["gacha-simulate"]["example"]), user = Depends(verify_key)):
-    if all_pulls.simulations > 1000:
-        raise HTTPException(status_code=400, detail="Simulations cannot exceed 1000")
-    try:
-        result = simulate_gacha(
-            simulations=all_pulls.simulations,
-            pyroxene=all_pulls.pyroxene,
-            rate_up=all_pulls.rate_up,
-            rate_up_3_star=all_pulls.rate_up_3_star,
-            pity_threshold=all_pulls.pity_threshold,
-            spark_threshold=all_pulls.spark_threshold
-        )
+        
+    result = simulate_gacha(
+        simulations=all_pulls.simulations,
+        pyroxene=all_pulls.pyroxene,
+        rate_up=all_pulls.rate_up,
+        rate_up_3_star=all_pulls.rate_up_3_star,
+        pity_threshold=all_pulls.pity_threshold,
+        spark_threshold=all_pulls.spark_threshold
+    )
 
-        return GachaPullSimulationResponse(**result)
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error: {e}")
-        raise HTTPException(status_code=500, detail="Error in server")
+    return GachaPullSimulationResponse(**result)
+    
 
 ##Calculate pulls needed for a target probability endpoint
 @server.post(
@@ -187,18 +187,14 @@ def simulate_odds(request: Request, all_pulls: GachaPullSimulationRequest = Body
     )
 @limiter.limit("30/minute")
 def target_pulls(request: Request, analyze_pulls: AnalyzePullsRequest = Body(example=doc_list["analyze-pulls"]["example"]), user = Depends(verify_key)):
-    try:
-        result = pull_target(
-            probability=analyze_pulls.probability,
-            rate_up=analyze_pulls.rate_up
-        )
+        
+    result = pull_target(
+        probability=analyze_pulls.probability,
+        rate_up=analyze_pulls.rate_up
+    )
 
-        return AnalyzePullsResponse(**result)
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error: {e}")
-        raise HTTPException(status_code=500, detail="Error in server")
+    return AnalyzePullsResponse(**result)
+    
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
