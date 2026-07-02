@@ -14,7 +14,7 @@ def create_health_check():
             'connection_checks': {
                 "mongodb": True,  
             },
-            'timestamp': timestamp,
+            'timestamp': timestamp.isoformat(),
             'environment': settings.ENVIRONMENT
         }
     
@@ -26,7 +26,7 @@ def create_health_check():
             'connection_checks': {
                 "mongodb": False,  
             },
-            'timestamp': timestamp,
+            'timestamp': timestamp.isoformat(),
             'environment': settings.ENVIRONMENT
             },
         )
