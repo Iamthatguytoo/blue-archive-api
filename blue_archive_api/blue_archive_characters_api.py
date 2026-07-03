@@ -12,12 +12,21 @@ from services.gacha_simulate import simulate_gacha
 from services.analyze_pulls import pull_target
 from services.health_check import create_health_check
 from services.cache_requests import set_cache, get_cache
-from docs_and_examples import doc_list
+from docs_and_examples import doc_list, tags_metadata
 import logging
 import os
 import time
 
-server = FastAPI(title="Fan-Made Blue Archive API", version="1.0.0")
+server = FastAPI(
+    title="Fan-Made Blue Archive API",
+    description="A fan-made REST API for Blue Archive data.",
+    contact={
+        "name": "Iamthatguytoo",
+        "url": "https://github.com/Iamthatguytoo",
+    },
+    version="1.0.0",
+    openapi_tags=tags_metadata
+    )
 
 setup_ip_rate_limiting(server=server)
 
