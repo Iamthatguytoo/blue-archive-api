@@ -40,3 +40,21 @@ doc_list = {
         }
     }
 }
+tags_metadata = [
+    {
+        "name": "default",
+        "description": "Basic endpoints for the API itself."
+    },
+    {
+        "name": "keys",
+        "description": "Endpoints for creating and managing API keys."
+    },
+    {
+        "name": "students",
+        "description": "Retrieve Blue Archive student information."
+    },
+    {
+        "name": "gacha",
+        "description": "Probability calculations, pull target analysis, and Monte Carlo simulations."
+    }
+]
