@@ -553,3 +553,9 @@ print(res.json())
 All student data is sourced from the Blue Archive Wiki community database:
 
 https://bluearchive.wiki/wiki/Characters
+
+Data is transformed into a structured API format with filtering, pagination, and developer-friendly access.
+
+This project is an unofficial fan-made API and is not affiliated with Nexon, NAT Games, or the Blue Archive Wiki team.
+
+If any maintainers or rights holders would like content modified or removed, please open an issue or contact the project maintainer.
