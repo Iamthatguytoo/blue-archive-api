@@ -1,11 +1,16 @@
 from pymongo.errors import PyMongoError
 
-def test_health(client):
+def test_health(client, monkeypatch):
+    class MockAdminSuccess:
+        def command(self, *args, **kwargs):
+            return {"ok": 1.0}
+
+    monkeypatch.setattr("services.health_check.client.admin", MockAdminSuccess())
+
     res = client.get("/health")
     assert res.status_code == 200
     
     data = res.json()
-
     assert data["status"] == "healthy"
     assert "connection_checks" in data
     assert data["connection_checks"]["mongodb"] is True

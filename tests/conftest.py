@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 from blue_archive_characters_api import server
-from db.database import api_key_collection
+from db.database import api_key_collection, client
 from datetime import datetime, timezone
 import pytest
 
@@ -40,7 +40,6 @@ def fake_key():
         "resetted_at": datetime.now(timezone.utc).date().isoformat(),
         "tier": "free"
     }
-
 
 @pytest.fixture
 def mock_api_key(monkeypatch, fake_key):

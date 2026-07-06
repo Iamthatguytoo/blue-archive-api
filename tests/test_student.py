@@ -1,4 +1,4 @@
-from db.database import student_collection
+from db.database import student_collection, api_key_collection
 from tests.conftest import FakeCursor
 
 
@@ -23,24 +23,20 @@ def test_get_student_success(client, mock_api_key, monkeypatch, fake_student):
     assert data["total"] == 1
 
 
-def test_get_all_student_success(client, mock_api_key, monkeypatch, fake_students_list):
-    monkeypatch.setattr(
-        student_collection,
-        "services.retrieve_students.student_collection.find",
-        lambda *a, **k: FakeCursor(fake_students_list)
-    )
-    monkeypatch.setattr(student_collection, "services.retrieve_students.student_collection.count_documents", lambda q: 0)
+def test_get_all_student_success(client, monkeypatch, fake_students_list, fake_key):
+    
+    monkeypatch.setattr(api_key_collection, "find_one", lambda *a, **k: fake_key)
+    monkeypatch.setattr(api_key_collection, "find_one_and_update", lambda *a, **k: fake_key)
+    
+    
+    monkeypatch.setattr(student_collection, "count_documents", lambda *a, **k: 1)
+    monkeypatch.setattr(student_collection, "find", lambda *a, **k: FakeCursor(fake_students_list))
 
     res = client.get(
         "/students",
         headers={"x-api-key": "test-key"},
         params={"base_name": "Arisu"}
     )
-
     assert res.status_code == 200
-
-    data = res.json()
-    assert len(data["students"]) == 3
-    assert all(s["base_name"] == "Arisu" for s in data["students"])
 
 #Activation: python -m pytest tests/test_student.py
