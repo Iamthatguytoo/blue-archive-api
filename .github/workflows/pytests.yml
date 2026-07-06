@@ -1,0 +1,38 @@
+name: FastAPI Testing
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip install pytest httpx fastapi pydantic-settings pymongo
+
+      - name: Run Pytest suite
+        
+        env:
+          ENVIRONMENT: testing
+          CLIENT: mongodb://localhost:27017/unused-by-mock  
+          DATABASE: BLUE_ARCHIVE_API
+          API_COLLECTION: BLUE_ARCHIVE_API_DATA
+          API_COLLECTION_KEYS: BLUE_ARCHIVE_API_KEYS
+        run: |
+          pytest tests/

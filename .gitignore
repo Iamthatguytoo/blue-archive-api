@@ -74,6 +74,3 @@ docker-compose.yml
 
 # Logs
 *.log
-
-# Tests
-tests/
