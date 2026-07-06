@@ -1,5 +1,8 @@
 from db.database import api_key_collection
 from datetime import datetime, timezone
+import pytest
+from auth.key_verification import verify_key
+from fastapi import HTTPException
 
 def test_missing_api_key(client):
     res = client.get("/students")
@@ -7,14 +10,14 @@ def test_missing_api_key(client):
     assert res.status_code == 403
     assert res.json()["detail"] == "API key required"
 
-def test_invalid_api_key(client):
-    res = client.get(
-        "/students",
-        headers={"x-api-key": "wrong_key"}
-    )
+def test_invalid_api_key(monkeypatch):
+    monkeypatch.setattr(api_key_collection, "find_one", lambda *a, **k: None)
 
-    assert res.status_code == 403
-    assert res.json()["detail"] == "Invalid API key"
+    with pytest.raises(HTTPException) as exc_info:
+        verify_key(api_key="wrong_key")
+
+    assert exc_info.value.status_code == 403
+    assert exc_info.value.detail == "Invalid API key"
 
 def test_valid_api_key(client, monkeypatch):
     fake_key = {
