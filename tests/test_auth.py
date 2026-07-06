@@ -1,4 +1,5 @@
-from db.database import api_key_collection
+from db.database import api_key_collection, student_collection
+from tests.conftest import FakeCursor
 from datetime import datetime, timezone
 import pytest
 from auth.key_verification import verify_key
@@ -19,7 +20,7 @@ def test_invalid_api_key(monkeypatch):
     assert exc_info.value.status_code == 403
     assert exc_info.value.detail == "Invalid API key"
 
-def test_valid_api_key(client, monkeypatch):
+def test_valid_api_key(client, monkeypatch, fake_students_list):
     fake_key = {
         "_id": "123",
         "api_key": "test-key",
@@ -29,23 +30,22 @@ def test_valid_api_key(client, monkeypatch):
         "tier": "free"
     }
 
-    monkeypatch.setattr(
-        api_key_collection,
-        "find_one",
-        lambda *args, **kwargs: fake_key
-    )
+    monkeypatch.setattr(api_key_collection, "find_one", lambda *args, **kwargs: fake_key)
+    monkeypatch.setattr(api_key_collection, "update_one", lambda *args, **kwargs: None)
+    monkeypatch.setattr(api_key_collection, "find_one_and_update", lambda *args, **kwargs: fake_key)
 
-    monkeypatch.setattr(
-        api_key_collection,
-        "find_one_and_update",
-        lambda *args, **kwargs: fake_key
-    )
-
+    monkeypatch.setattr(student_collection, "count_documents", lambda *args, **kwargs: 1)
+     
+    monkeypatch.setattr(student_collection, "find", lambda *args, **kwargs: FakeCursor(fake_students_list))
+  
     res = client.get(
         "/students",
         headers={"x-api-key": "test-key"}
     )
+
     assert res.status_code == 200
+    assert res.json()["total"] == 1
+    assert res.json()["students"][0]["name"] == "Arisu"
 
     
 def test_rate_limit_exceeded(client, monkeypatch):
