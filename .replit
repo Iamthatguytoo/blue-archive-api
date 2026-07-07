@@ -1,0 +1,37 @@
+modules = ["python-3.11"]
+
+[nix]
+channel = "stable-25_05"
+packages = ["gitFull", "glibcLocales", "libxcrypt", "playwright-driver"]
+
+hidden = ["tests", ".github", ".pytest_cache"]
+
+[packager]
+ignoredPackages = ["pytest", "httpx"]
+
+[agent]
+expertMode = true
+
+[workflows]
+runButton = "Activate API"
+
+[[workflows.workflow]]
+name = "Run the API(Non-Agent)"
+mode = "sequential"
+author = 59678616
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "PORT=5000 python blue_archive_characters_api.py"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[deployment]
+deploymentTarget = "autoscale"
+run = ["uvicorn", "blue_archive_characters_api:server", "--host", "0.0.0.0", "--port", "5000"]
