@@ -1,5 +1,5 @@
-from pydantic import BaseModel, Field
-from typing import Optional, Literal
+from pydantic import BaseModel, Field, model_validator
+from typing import Literal
 
 class Terrain(BaseModel):
     urban_terrain: str | None = None
@@ -30,7 +30,7 @@ class PaginatedResponseModel(BaseModel):
     students: list[StudentResponse]
 
 class CalcRequest(BaseModel):
-    pyroxene: int = Field(..., ge=0)
+    pyroxene: int = Field(..., ge=120)
     rate_up: float = Field(0.007, gt=0, lt=1)
 
 class CalcResponse(BaseModel):
@@ -41,12 +41,26 @@ class CalcResponse(BaseModel):
     chance_need_spark: float
     
 class GachaPullSimulationRequest(BaseModel):
-    simulations: int = Field(..., gt=0, le=10000)
-    pyroxene: int = Field(..., ge=0)
+    simulations: int = Field(..., gt=0, le=1000)
+    pyroxene: int = Field(..., ge=120)
     rate_up: float = Field(0.007, gt=0, lt=1)
     rate_up_3_star: float = Field(0.03, gt=0, lt=1)
     pity_threshold: int = Field(100, gt=0)
     spark_threshold: int = Field(200, gt=0)
+
+    @model_validator(mode='after')
+    def validate_fields(self):
+        if self.pity_threshold >= self.spark_threshold:
+            raise ValueError(
+                "pity_threshold must be less than spark_threshold"
+            )
+
+        if self.rate_up > self.rate_up_3_star:
+            raise ValueError(
+                "rate_up cannot be greater than rate_up_3_star"
+            )
+
+        return self
 
 class GachaPullSimulationResponse(BaseModel):
     simulations_conducted: int

@@ -17,11 +17,7 @@ def simulate_gacha(
     total_successes = []
             
     pulls_per_trial = pyroxene // 120
-    if simulations > 1000:
-        raise HTTPException(status_code=400, detail="Simulations cannot exceed 1000")
-    if pulls_per_trial == 0:
-        raise HTTPException(status_code=400, detail='Not enough Pyroxenes for pulling')         
-
+             
     for _ in range(simulations):
         pulls = pulls_per_trial
         success = False
