@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends, Request, Body
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
+from fastapi.encoders import jsonable_encoder
 import uvicorn as uv
 from models import StudentFilter, CalcRequest, CalcResponse, GachaPullSimulationRequest, GachaPullSimulationResponse, PaginatedResponseModel, AnalyzePullsRequest, AnalyzePullsResponse
 from auth.create_random_key import generate_key
@@ -51,11 +52,11 @@ async def global_exception_handler(request: Request, exc: Exception):
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     return JSONResponse(
         status_code=422,
-        content={
+        content=jsonable_encoder({
             "status": "error",
             "message": "Invalid input",
-            "details": exc.errors()
-        },
+            "details": exc.errors(),
+        }),
     )
 
 ##Log each action middleware
