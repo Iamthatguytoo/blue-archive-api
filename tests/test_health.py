@@ -7,7 +7,7 @@ def test_health(client, monkeypatch):
 
     monkeypatch.setattr("services.health_check.client.admin", MockAdminSuccess())
 
-    res = client.get("/v1/health")
+    res = client.get("/health")
     assert res.status_code == 200
     
     data = res.json()
@@ -25,7 +25,7 @@ def test_health_mongodb_failure(client, monkeypatch):
 
     monkeypatch.setattr("services.health_check.client.admin", MockAdmin())
 
-    res = client.get("/v1/health")
+    res = client.get("/health")
 
     assert res.status_code == 503
 

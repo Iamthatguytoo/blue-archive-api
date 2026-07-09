@@ -16,10 +16,10 @@ Interactive docs: /docs  or  /redoc
 
 ## Why use this API?
 
-- **Are you planning pulls for a new banner?** Use `/gacha-calculate` to instantly see if your current Pyroxenes are enough to get the rate-up naturally, or whether you'll need to spark.
-- **Are you not sure if you'll need to spark?** `/gacha-simulate` can run up to 1,000 Monte Carlo trial pulls so you can see realistic odds, average pulls to success, and how often sparking is actually needed.
-- **Do you want to know your confidence level?** `/analyze-pulls` works in reverse. You give it a target probability (e.g. 80% chance) and it tells you exactly how many pulls and Pyroxenes you need.
-- **Are you looking for specific students?** `/students` lets you filter by school, weapon, terrain rating, damage type, and more — great for team building tools or wikis.
+- **Are you planning pulls for a new banner?** Use `/v1/gacha-calculate` to instantly see if your current Pyroxenes are enough to get the rate-up naturally, or whether you'll need to spark.
+- **Are you not sure if you'll need to spark?** `/v1/gacha-simulate` can run up to 1,000 Monte Carlo trial pulls so you can see realistic odds, average pulls to success, and how often sparking is actually needed.
+- **Do you want to know your confidence level?** `/v1/analyze-pulls` works in reverse. You give it a target probability (e.g. 80% chance) and it tells you exactly how many pulls and Pyroxenes you need.
+- **Are you looking for specific students?** `/v1/students` lets you filter by school, weapon, terrain rating, damage type, and more — great for team building tools or wikis.
 
 ---
 
@@ -35,7 +35,7 @@ curl -X POST https://blue-archive-api--JohnArchive.replit.app/v1/auth/register
 **3. Make your first request:**
 ```bash
 curl -H "x-api-key: YOUR_KEY" \
-"https://blue-archive-api--JohnArchive.replit.app/students?name=Hina"
+"https://blue-archive-api--JohnArchive.replit.app/v1/students?name=Hina"
 ```
 
 ---
@@ -448,10 +448,10 @@ print(res.json())
 - `GET /health` — Health check, returns server status (useful for uptime monitoring)
 
 ### Authentication
-- `POST /auth/register` — Generate a new API key (returns `sk_*` key, shown only once)
+- `POST /v1/auth/register` — Generate a new API key (returns `sk_*` key, shown only once)
 
 ### Student Data
-- `GET /students` — Retrieve paginated student data with filtering
+- `GET /v1/students` — Retrieve paginated student data with filtering
 
   | Parameter | Type | Description |
   |-----------|------|-------------|
@@ -467,7 +467,7 @@ print(res.json())
   | `skip` | int | Results to skip for pagination (default: 0) |
 
 ### Gacha Calculations
-- `POST /gacha-calculate` — Calculate pull odds from Pyroxenes
+- `POST /v1/gacha-calculate` — Calculate pull odds from Pyroxenes
   - Input:
     
   | Field | Type | Description |
@@ -486,7 +486,7 @@ print(res.json())
   | `chance_need_spark` | float | % chance you'll need to spark to guarantee the rate-up |
 
 ### Gacha Simulation
-- `POST /gacha-simulate` — Run Monte Carlo gacha simulations (up to 1,000 trials)
+- `POST /v1/gacha-simulate` — Run Monte Carlo gacha simulations (up to 1,000 trials)
   - Input: 
 
   | Field | Type | Description |
@@ -516,7 +516,7 @@ print(res.json())
   | `average_off_banner_3stars` | float | Average non-rate-up 3 stars/★ students per trial |
 
 ### Pull Analysis
-- `POST /analyze-pulls` — Reverse probability: find pulls needed for a target confidence
+- `POST /v1/analyze-pulls` — Reverse probability: find pulls needed for a target confidence
   - Input: 
 
   | Field | Type | Description |
@@ -542,7 +542,7 @@ print(res.json())
 ## Notes
 
 - Your API key is shown only once at registration. Store and keep the key somewhere safe
-- All endpoints except `/`, `/health`, and `/auth/register` require the `x-api-key` header
+- All endpoints except `/`, `/health`, and `/v1/auth/register` require the `x-api-key` header
 - Free tier keys have a 1,000 request/day limit, reset daily
 - Student data responses are cached server-side for fast repeated queries
 
