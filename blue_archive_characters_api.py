@@ -6,6 +6,8 @@ import uvicorn as uv
 from middleware.rate_limit import setup_ip_rate_limiting
 from docs_and_examples import tags_metadata
 from api.v1.endpoints import blue_archive_api_v1_router
+from docs_and_examples import doc_list
+from services.health_check import create_health_check
 import logging
 import os
 import time
@@ -67,6 +69,32 @@ async def log_request(request: Request, call_next):
         )
     
     return response
+
+##Basic welcome page endpoint
+@server.get(
+    "/",
+    summary=doc_list["/"]["summary"],
+    response_description=doc_list["/"]["response_description"]
+)
+def show_api_working():
+    return {
+        "message": "Hello! Welcome to the Blue Archive API",
+        "status": "running",
+        "docs": "/docs",
+        "redoc": "/redoc",
+        "version": "1.0.0",
+        "created_by(github)": "Iamthatguytoo",
+        "credits": "Character data sourced from Blue Archive Wiki. Retrieved from Blue Archive Wiki Characters page. A big thanks to the Blue Archive Wiki team for their hard work." 
+    }
+
+## Health check endpoint
+@server.get(
+    "/health",
+    summary=doc_list["health"]["summary"],
+    response_description=doc_list["health"]["response_description"]
+)
+def health_check():
+    return create_health_check()
 
 ##Import the Router(versioned)
 server.include_router(

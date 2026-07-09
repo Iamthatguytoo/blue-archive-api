@@ -27,7 +27,7 @@ Interactive docs: /docs  or  /redoc
 
 **1. Register for a free API key:**
 ```bash
-curl -X POST https://blue-archive-api--JohnArchive.replit.app/auth/register
+curl -X POST https://blue-archive-api--JohnArchive.replit.app/v1/auth/register
 ```
 
 **2. Save your key** — it's only shown once.
@@ -91,18 +91,18 @@ All probability values use decimal format:
 ### Register an API key
 
 ```bash
-curl -X POST https://blue-archive-api--JohnArchive.replit.app/auth/register
+curl -X POST https://blue-archive-api--JohnArchive.replit.app/v1/auth/register
 ```
 
 Windows (PowerShell):
 ```powershell
-Invoke-RestMethod -Method POST -Uri "https://blue-archive-api--JohnArchive.replit.app/auth/register"
+Invoke-RestMethod -Method POST -Uri "https://blue-archive-api--JohnArchive.replit.app/v1/auth/register"
 ```
 
 Python:
 ```python
 import requests
-res = requests.post("https://blue-archive-api--JohnArchive.replit.app/auth/register")
+res = requests.post("https://blue-archive-api--JohnArchive.replit.app/v1/auth/register")
 print(res.json())
 ```
 
@@ -127,13 +127,13 @@ print(res.json())
 
 ```bash
 curl -H "x-api-key: YOUR_KEY" \
-"https://blue-archive-api--JohnArchive.replit.app/students?name=Hina"
+"https://blue-archive-api--JohnArchive.replit.app/v1/students?name=Hina"
 ```
 
 Windows (PowerShell):
 ```powershell
 Invoke-WebRequest `
-  -Uri "https://blue-archive-api--JohnArchive.replit.app/students?name=Hina" `
+  -Uri "https://blue-archive-api--JohnArchive.replit.app/v1/students?name=Hina" `
   -Headers @{ "x-api-key" = "YOUR_API_KEY" }
 ```
 
@@ -141,7 +141,7 @@ Python:
 ```python
 import requests
 res = requests.get(
-    "https://blue-archive-api--JohnArchive.replit.app/students",
+    "https://blue-archive-api--JohnArchive.replit.app/v1/students",
     headers={"x-api-key": "YOUR_API_KEY"},
     params={"name": "Hina"}
 )
@@ -189,19 +189,19 @@ This is an example of fetching back-row mystic-type students from Millennium ski
 
 ```bash
 curl -H "x-api-key: YOUR_API_KEY" \
-"https://blue-archive-api--JohnArchive.replit.app/students?school=millennium&damage_type=mystic&position=back&skip=2&limit=1"
+"https://blue-archive-api--JohnArchive.replit.app/v1/students?school=millennium&damage_type=mystic&position=back&skip=2&limit=1"
 ```
 Windows (PowerShell):
 ```powershell
 Invoke-WebRequest `
-  -Uri "https://blue-archive-api--JohnArchive.replit.app/students?school=millennium&damage_type=mystic&position=back&skip=2&limit=1" `
+  -Uri "https://blue-archive-api--JohnArchive.replit.app/v1/students?school=millennium&damage_type=mystic&position=back&skip=2&limit=1" `
   -Headers @{ "x-api-key" = "YOUR_API_KEY" }
 ```
 Python:
 ```python
 import requests
 res = requests.get(
-    "https://blue-archive-api--JohnArchive.replit.app/students",
+    "https://blue-archive-api--JohnArchive.replit.app/v1/students",
     headers={"x-api-key": "YOUR_API_KEY"},
     params={
         "school": "millennium",
@@ -254,7 +254,7 @@ print(res.json())
 Use this when you want to know: "I have X Pyroxenes — what are my chances?"
 
 ```bash
-curl -X POST "https://blue-archive-api--JohnArchive.replit.app/gacha-calculate" \
+curl -X POST "https://blue-archive-api--JohnArchive.replit.app/v1/gacha-calculate" \
 -H "Content-Type: application/json" \
 -H "x-api-key: YOUR_API_KEY" \
 -d '{
@@ -267,7 +267,7 @@ Windows (PowerShell):
 ```powershell
 Invoke-WebRequest `
 -Method POST `
--Uri "https://blue-archive-api--JohnArchive.replit.app/gacha-calculate" `
+-Uri "https://blue-archive-api--JohnArchive.replit.app/v1/gacha-calculate" `
 -Headers @{
   "Content-Type" = "application/json"
   "x-api-key" = "YOUR_API_KEY"
@@ -282,7 +282,7 @@ Python:
 ```python
 import requests
 res = requests.post(
-    "https://blue-archive-api--JohnArchive.replit.app/gacha-calculate",
+    "https://blue-archive-api--JohnArchive.replit.app/v1/gacha-calculate",
     headers={"x-api-key": "YOUR_API_KEY"},
     json={"pyroxene": 24000, "rate_up": 0.007}
 )
@@ -311,7 +311,7 @@ print(res.json())
 Use this when you want realistic pull statistics across many trials.
 
 ```bash
-curl -X POST "https://blue-archive-api--JohnArchive.replit.app/gacha-simulate" \
+curl -X POST "https://blue-archive-api--JohnArchive.replit.app/v1/gacha-simulate" \
 -H "Content-Type: application/json" \
 -H "x-api-key: YOUR_API_KEY" \
 -d '{
@@ -328,7 +328,7 @@ Windows (PowerShell):
 ```powershell
 Invoke-WebRequest `
 -Method POST `
--Uri "https://blue-archive-api--JohnArchive.replit.app/gacha-simulate" `
+-Uri "https://blue-archive-api--JohnArchive.replit.app/v1/gacha-simulate" `
 -Headers @{
   "Content-Type" = "application/json"
   "x-api-key" = "YOUR_API_KEY"
@@ -347,7 +347,7 @@ Python:
 ```python
 import requests
 res = requests.post(
-    "https://blue-archive-api--JohnArchive.replit.app/gacha-simulate",
+    "https://blue-archive-api--JohnArchive.replit.app/v1/gacha-simulate",
     headers={"x-api-key": "YOUR_API_KEY"},
     json={
         "simulations": 100,
@@ -390,7 +390,7 @@ print(res.json())
 Use this when you want to know: "How many Pyroxenes do I need for an 80% chance?"
 
 ```bash
-curl -X POST "https://blue-archive-api--JohnArchive.replit.app/analyze-pulls" \
+curl -X POST "https://blue-archive-api--JohnArchive.replit.app/v1/analyze-pulls" \
 -H "Content-Type: application/json" \
 -H "x-api-key: YOUR_API_KEY" \
 -d '{
@@ -403,7 +403,7 @@ Windows (PowerShell):
 ```powershell
 Invoke-WebRequest `
 -Method POST `
--Uri "https://blue-archive-api--JohnArchive.replit.app/analyze-pulls" `
+-Uri "https://blue-archive-api--JohnArchive.replit.app/v1/analyze-pulls" `
 -Headers @{
   "Content-Type" = "application/json"
   "x-api-key" = "YOUR_API_KEY"
@@ -418,7 +418,7 @@ Python:
 ```python
 import requests
 res = requests.post(
-    "https://blue-archive-api--JohnArchive.replit.app/analyze-pulls",
+    "https://blue-archive-api--JohnArchive.replit.app/v1/analyze-pulls",
     headers={"x-api-key": "YOUR_API_KEY"},
     json={"probability": 0.8, "rate_up": 0.007}
 )
