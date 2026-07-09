@@ -3,6 +3,10 @@ doc_list = {
         "response_description": "Greets you and checks if its running, shows you directions, and credits for creator of the API and the source for data",
         "summary": "Basic landing page when searching for this API"
     },
+    "health": {
+        "response_description": "Returns the current health status of the API, MongoDB connection status, timestamp, and environment.",
+        "summary" : "Check API health and database connectivity"
+    },
     "keys": {
         "response_description": "Prints out a key that contains 'sk_' and another 32 characters after that",
         "summary": "Self serve endpoint to create keys"

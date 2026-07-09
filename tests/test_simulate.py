@@ -14,7 +14,7 @@ import pytest
 ])
 def test_post_calculate(client, mock_api_key, payload, expected_status):
     res = client.post(
-        "/gacha-simulate",
+        "/v1/gacha-simulate",
         headers={"x-api-key": "test-key"},
         json=payload
     )

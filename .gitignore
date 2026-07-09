@@ -74,3 +74,6 @@ docker-compose.yml
 
 # Logs
 *.log
+
+#That one outdated test file
+get_request_test.py

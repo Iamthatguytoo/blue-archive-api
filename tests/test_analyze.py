@@ -8,7 +8,7 @@ import pytest
 ])
 def test_post_analyze(client, mock_api_key, payload, expected_status):
     res = client.post(
-        "/analyze-pulls",
+        "/v1/analyze-pulls",
         headers={"x-api-key": "test-key"},
         json=payload
     )
@@ -24,4 +24,4 @@ def test_post_analyze(client, mock_api_key, payload, expected_status):
     elif expected_status in (400, 422):
         assert "details" or "detail" in data
 
-#Activation: python -m pytest tests/test_analyze.py
+#Activation: python -m pytest tests/test_analyze.py 

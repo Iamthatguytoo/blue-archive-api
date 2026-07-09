@@ -6,7 +6,7 @@ from auth.key_verification import verify_key
 from fastapi import HTTPException
 
 def test_missing_api_key(client):
-    res = client.get("/students")
+    res = client.get("/v1/students")
 
     assert res.status_code == 403
     assert res.json()["detail"] == "API key required"
@@ -39,7 +39,7 @@ def test_valid_api_key(client, monkeypatch, fake_students_list):
     monkeypatch.setattr(student_collection, "find", lambda *args, **kwargs: FakeCursor(fake_students_list))
   
     res = client.get(
-        "/students",
+        "/v1/students",
         headers={"x-api-key": "test-key"}
     )
 
@@ -62,7 +62,7 @@ def test_rate_limit_exceeded(client, monkeypatch):
     monkeypatch.setattr(api_key_collection, "find_one_and_update", lambda *a, **k: None)
 
     res = client.get(
-        "/students",
+        "/v1/students",
         headers={"x-api-key": "test-key"}
     )
 

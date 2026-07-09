@@ -11,7 +11,7 @@ def test_get_student_success(client, mock_api_key, monkeypatch, fake_student):
     monkeypatch.setattr(student_collection, "count_documents", lambda q: 1)
 
     res = client.get(
-        "/students",
+        "/v1/students",
         headers={"x-api-key": "test-key"},
         params={"name": "Arisu"}
     )
@@ -33,7 +33,7 @@ def test_get_all_student_success(client, monkeypatch, fake_students_list, fake_k
     monkeypatch.setattr(student_collection, "find", lambda *a, **k: FakeCursor(fake_students_list))
 
     res = client.get(
-        "/students",
+        "/v1/students",
         headers={"x-api-key": "test-key"},
         params={"base_name": "Arisu"}
     )
