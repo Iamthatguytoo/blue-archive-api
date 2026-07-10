@@ -543,7 +543,7 @@ print(res.json())
 
 - Your API key is shown only once at registration. Store and keep the key somewhere safe
 - All endpoints except `/`, `/health`, and `/v1/auth/register` require the `x-api-key` header
-- Free tier keys have a 1,000 request/day limit, reset daily
+- All keys have a 1,000 request/day limit, reset daily
 - Student data responses are cached server-side for fast repeated queries
 
 ---

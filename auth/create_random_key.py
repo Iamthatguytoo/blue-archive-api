@@ -5,7 +5,6 @@ import secrets
 def generate_key(tier = "free"):
     limits = {
         "free": {"daily_limit": 1000},
-        "paid": {"daily_limit": 5000},
     }
 
     rate = limits[tier]["daily_limit"]
