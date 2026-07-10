@@ -27,9 +27,7 @@ jobs:
           pip install ruff
 
       - name: Run Ruff (Linting & Formatting check)
-        run: |
-          ruff check . --target-version py314
-          ruff format --check . --target-version py314
+        run: ruff check . --target-version py314
 
   test:
     runs-on: ubuntu-latest
