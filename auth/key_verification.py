@@ -37,7 +37,7 @@ def verify_key(api_key: str = Security(scrt_api_key)):
         {
             "$inc": {"requests_today": 1}
         },
-        return_document=True
+        return_document=True,
     )
     
     if not result:

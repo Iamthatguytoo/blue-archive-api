@@ -39,7 +39,7 @@ class CalcResponse(BaseModel):
     pulls_to_spark: int
     chance_get_rate_up_naturally: float
     chance_need_spark: float
-    
+
 class GachaPullSimulationRequest(BaseModel):
     simulations: int = Field(..., gt=0, le=1000)
     pyroxene: int = Field(..., ge=120)
@@ -48,17 +48,13 @@ class GachaPullSimulationRequest(BaseModel):
     pity_threshold: int = Field(100, gt=0)
     spark_threshold: int = Field(200, gt=0)
 
-    @model_validator(mode='after')
+    @model_validator(mode="after")
     def validate_fields(self):
         if self.pity_threshold >= self.spark_threshold:
-            raise ValueError(
-                "pity_threshold must be less than spark_threshold"
-            )
+            raise ValueError("pity_threshold must be less than spark_threshold")
 
         if self.rate_up > self.rate_up_3_star:
-            raise ValueError(
-                "rate_up cannot be greater than rate_up_3_star"
-            )
+            raise ValueError("rate_up cannot be greater than rate_up_3_star")
 
         return self
 

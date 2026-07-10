@@ -9,5 +9,7 @@ class Settings(BaseSettings):
     API_COLLECTION_KEYS: str = "blue_archive_api_secret_keys"
 
     class Config:
-        env_file = '.env.local'
+        env_file = ".env.local"
+
+
 settings = Settings()

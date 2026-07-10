@@ -2,6 +2,7 @@ from db.database import student_collection
 from pydantic import BaseModel
 import re
 
+
 def serialize_student(doc: dict) -> dict:
     doc = dict(doc)
     doc.pop("_id", None)
@@ -13,7 +14,7 @@ def fetch_students( filters: BaseModel, name: str | None = None, base_name: str 
     query = {}
 
     if name:
-        query['name'] = {"$regex": f"^{re.escape(name)}$", "$options": "i"}
+        query["name"] = {"$regex": f"^{re.escape(name)}$", "$options": "i"}
     if base_name:
         exact_query = {"base_name": {"$regex": f"^{re.escape(base_name)}$", "$options": "i"}}
 
@@ -22,7 +23,7 @@ def fetch_students( filters: BaseModel, name: str | None = None, base_name: str 
         if count:
             query.update(exact_query)
         else:
-            query['base_name'] = {"$regex": re.escape(base_name), "$options": "i"}
+            query["base_name"] = {"$regex": re.escape(base_name), "$options": "i"}
 
     query.update(filters.model_dump(exclude_none=True))
 

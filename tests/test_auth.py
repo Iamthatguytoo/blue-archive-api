@@ -27,7 +27,7 @@ def test_valid_api_key(client, monkeypatch, fake_students_list):
         "requests_today": 0,
         "daily_limit": 10,
         "resetted_at": datetime.now(timezone.utc).date().isoformat(),
-        "tier": "free"
+        "tier": "free",
     }
 
     monkeypatch.setattr(api_key_collection, "find_one", lambda *args, **kwargs: fake_key)
@@ -55,7 +55,7 @@ def test_rate_limit_exceeded(client, monkeypatch):
         "requests_today": 1000,
         "daily_limit": 1000,
         "resetted_at": datetime.now(timezone.utc).date().isoformat(),
-        "tier": "free"
+        "tier": "free",
     }
 
     monkeypatch.setattr(api_key_collection, "find_one", lambda *a, **k: fake_key)

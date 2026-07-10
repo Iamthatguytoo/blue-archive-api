@@ -1,12 +1,16 @@
 import pytest
 
-@pytest.mark.parametrize("payload, expected_status", [
-    ({"pyroxene": 22000, "rate_up": 0.007}, 200),
-    ({"pyroxene": 22000}, 200),
-    ({"pyroxene": 22000, "rate_up": None}, 422),
-    ({"pyroxene": 22000, "rate_up": 0}, 422),
-    ({"pyroxene": -1, "rate_up": 0.007}, 422),
-])
+
+@pytest.mark.parametrize(
+    "payload, expected_status",
+    [
+        ({"pyroxene": 22000, "rate_up": 0.007}, 200),
+        ({"pyroxene": 22000}, 200),
+        ({"pyroxene": 22000, "rate_up": None}, 422),
+        ({"pyroxene": 22000, "rate_up": 0}, 422),
+        ({"pyroxene": -1, "rate_up": 0.007}, 422),
+    ],
+)
 def test_post_calculate(client, mock_api_key, payload, expected_status):
     res = client.post(
         "/v1/gacha-calculate",

@@ -24,7 +24,7 @@ def generate_key(tier = "free"):
         "tier": tier,
         "requests_today": 0,
         "resetted_at": today,
-        "created_at": datetime.now(timezone.utc)
+        "created_at": datetime.now(timezone.utc),
     }
         
     api_key_collection.insert_one(data)
@@ -33,6 +33,6 @@ def generate_key(tier = "free"):
         "api_key": data["api_key"],
         "daily_limit": data["daily_limit"],
         "tier": data["tier"],
-        "resetted_at": today
+        "resetted_at": today,
     }
     

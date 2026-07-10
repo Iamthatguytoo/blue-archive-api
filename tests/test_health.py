@@ -32,5 +32,5 @@ def test_health_mongodb_failure(client, monkeypatch):
     data = res.json()
     assert data["detail"]["status"] == "unhealthy"
     assert data["detail"]["connection_checks"]["mongodb"] is False
-    
+
 #Activation: python -m pytest tests/test_health.py

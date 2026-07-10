@@ -1,10 +1,10 @@
 from fastapi.testclient import TestClient
 from blue_archive_characters_api import server
-from db.database import api_key_collection, client
+from db.database import api_key_collection
 from datetime import datetime, timezone
 import pytest
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def client():
     return TestClient(server)
 
@@ -38,7 +38,7 @@ def fake_key():
         "requests_today": 0,
         "daily_limit": 1000,
         "resetted_at": datetime.now(timezone.utc).date().isoformat(),
-        "tier": "free"
+        "tier": "free",
     }
 
 @pytest.fixture
@@ -64,8 +64,8 @@ def fake_student():
         "terrain": {
             "urban_terrain": None,
             "outdoor_terrain": None,
-            "indoor_terrain": None
-        }
+            "indoor_terrain": None,
+        },
     }
 
 

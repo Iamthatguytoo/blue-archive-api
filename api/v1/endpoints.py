@@ -1,5 +1,14 @@
 from fastapi import Depends, Request, Body, APIRouter
-from models import StudentFilter, CalcRequest, CalcResponse, GachaPullSimulationRequest, GachaPullSimulationResponse, PaginatedResponseModel, AnalyzePullsRequest, AnalyzePullsResponse
+from models import (
+    StudentFilter,
+    CalcRequest,
+    CalcResponse,
+    GachaPullSimulationRequest,
+    GachaPullSimulationResponse,
+    PaginatedResponseModel,
+    AnalyzePullsRequest,
+    AnalyzePullsResponse,
+)
 from auth.key_verification import verify_key
 from auth.create_random_key import generate_key
 from middleware.rate_limit import limiter
@@ -20,7 +29,7 @@ blue_archive_api_v1_router = APIRouter()
     "/auth/register",
     tags=["keys"],
     summary=doc_list["keys"]["summary"],
-    response_description=doc_list["keys"]["response_description"]
+    response_description=doc_list["keys"]["response_description"],
 )
 @limiter.limit("2/hour")
 def generate_api_key(request: Request):
@@ -33,12 +42,12 @@ def generate_api_key(request: Request):
 
 ##Get student data from DB endpoint
 @blue_archive_api_v1_router.get(
-        "/students", 
-        tags=["students"], 
-        summary=doc_list["students"]["summary"], 
-        response_description=doc_list["students"]["response_description"], 
-        response_model=PaginatedResponseModel
-    )
+    "/students",
+    tags=["students"],
+    summary=doc_list["students"]["summary"],
+    response_description=doc_list["students"]["response_description"],
+    response_model=PaginatedResponseModel,
+)
 @limiter.limit("60/minute")
 def get_students(request: Request, user = Depends(verify_key), name: str | None = None, base_name: str | None = None, limit: int = 20, skip: int = 0, filters: StudentFilter = Depends()):
     
@@ -65,11 +74,11 @@ def get_students(request: Request, user = Depends(verify_key), name: str | None 
 
 ##Calculate gacha pulls endpoint
 @blue_archive_api_v1_router.post(
-    "/gacha-calculate", 
+    "/gacha-calculate",
     tags=["gacha"],
     summary=doc_list["gacha-calculate"]["summary"],
     response_description=doc_list["gacha-calculate"]["response_description"],
-    response_model=CalcResponse
+    response_model=CalcResponse,
 )
 @limiter.limit("15/minute")
 def calculate_odds(request: Request, pyroxene: CalcRequest = Body(example=doc_list["gacha-calculate"]["example"]), user = Depends(verify_key)):
@@ -85,8 +94,8 @@ def calculate_odds(request: Request, pyroxene: CalcRequest = Body(example=doc_li
     "/gacha-simulate",
     tags=["gacha"],
     summary=doc_list["gacha-simulate"]["summary"],
-    response_description=doc_list["gacha-simulate"]["response_description"], 
-    response_model=GachaPullSimulationResponse
+    response_description=doc_list["gacha-simulate"]["response_description"],
+    response_model=GachaPullSimulationResponse,
 )
 @limiter.limit("15/minute")
 def simulate_odds(request: Request, all_pulls: GachaPullSimulationRequest = Body(example=doc_list["gacha-simulate"]["example"]), user = Depends(verify_key)):
@@ -97,7 +106,7 @@ def simulate_odds(request: Request, all_pulls: GachaPullSimulationRequest = Body
         rate_up=all_pulls.rate_up,
         rate_up_3_star=all_pulls.rate_up_3_star,
         pity_threshold=all_pulls.pity_threshold,
-        spark_threshold=all_pulls.spark_threshold
+        spark_threshold=all_pulls.spark_threshold,
     )
 
     return GachaPullSimulationResponse(**result)
@@ -107,10 +116,9 @@ def simulate_odds(request: Request, all_pulls: GachaPullSimulationRequest = Body
     "/analyze-pulls",
     tags=["gacha"],
     summary=doc_list["analyze-pulls"]["summary"],
-    response_description=doc_list["analyze-pulls"]["response_description"], 
-    response_model=AnalyzePullsResponse
+    response_description=doc_list["analyze-pulls"]["response_description"],
+    response_model=AnalyzePullsResponse,
 )
-
 @limiter.limit("30/minute")
 def target_pulls(request: Request, analyze_pulls: AnalyzePullsRequest = Body(example=doc_list["analyze-pulls"]["example"]), user = Depends(verify_key)):
         

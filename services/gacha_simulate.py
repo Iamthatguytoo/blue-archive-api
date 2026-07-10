@@ -1,15 +1,15 @@
 import random
 import statistics
-from fastapi import HTTPException
+
 
 def simulate_gacha(
-        simulations: int, 
-        pyroxene: int,
-        rate_up: float,
-        rate_up_3_star: float,
-        pity_threshold: int,
-        spark_threshold: int
-        ):
+    simulations: int,
+    pyroxene: int,
+    rate_up: float,
+    rate_up_3_star: float,
+    pity_threshold: int,
+    spark_threshold: int,
+):
     total_pulls = []
     total_rate_up_natural = []
     total_off_banner_3_stars = []
@@ -39,7 +39,7 @@ def simulate_gacha(
 
             if is_3_star:
                 pity_count = 0
-                is_rate_up_unit =  random.random() < (rate_up / rate_up_3_star)
+                is_rate_up_unit = random.random() < (rate_up / rate_up_3_star)
                 if is_rate_up_unit:
                     success = True
                     rate_up_natural = True
@@ -76,5 +76,5 @@ def simulate_gacha(
         "max_pulls": max_pulls,
         "min_pulls": min_pulls,
         "natural_rate_up_obtained": rate_up_natural_count,
-        "average_off_banner_3stars": average_off_banner_3stars
+        "average_off_banner_3stars": average_off_banner_3stars,
     }
