@@ -66,10 +66,10 @@ curl -H "x-api-key: YOUR_KEY" \
 Each endpoint has a per-IP rate limit:
 
 ```
-/auth/register                        → 2/hour
-/students                             → 60/minute
-/gacha-calculate and /gacha-simulate  → 15/minute
-/analyze-pulls                        → 30/minute
+/v1/auth/register                        → 2/hour
+/v1/students                             → 60/minute
+/v1/gacha-calculate and /v1/gacha-simulate  → 15/minute
+/v1/analyze-pulls                        → 30/minute
 ```
 
 ---
