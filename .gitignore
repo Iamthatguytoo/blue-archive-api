@@ -49,6 +49,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 __pycache__
+.ruff_cache
 
 # Environments
 .env.local

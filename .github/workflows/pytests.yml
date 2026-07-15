@@ -57,4 +57,4 @@ jobs:
           API_COLLECTION: BLUE_ARCHIVE_API_DATA
           API_COLLECTION_KEYS: BLUE_ARCHIVE_API_KEYS
         run: |
-          pytest tests/
+          pytest tests/v1

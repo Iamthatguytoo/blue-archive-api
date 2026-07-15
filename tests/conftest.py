@@ -73,4 +73,4 @@ def fake_student():
 def fake_students_list(fake_student):
     return [fake_student]
 
-#Activate ALL: python -m pytest tests/ -v
+#Activate ALL: python -m pytest tests/v1 -v

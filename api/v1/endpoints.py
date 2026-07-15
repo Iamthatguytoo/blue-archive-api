@@ -1,5 +1,5 @@
 from fastapi import Depends, Request, Body, APIRouter
-from models import (
+from schemas.v1.schema import (
     StudentFilter,
     CalcRequest,
     CalcResponse,
@@ -9,14 +9,14 @@ from models import (
     AnalyzePullsRequest,
     AnalyzePullsResponse,
 )
-from auth.key_verification import verify_key
-from auth.create_random_key import generate_key
-from middleware.rate_limit import limiter
-from services.retrieve_students import fetch_students
-from services.gacha_calculate import calculate_gacha
-from services.gacha_simulate import simulate_gacha
-from services.analyze_pulls import pull_target
-from services.cache_requests import set_cache, get_cache
+from auth.v1.key_verification import verify_key
+from auth.v1.create_random_key import generate_key
+from middleware.v1.rate_limit import limiter
+from services.v1.retrieve_students import fetch_students
+from services.v1.gacha_calculate import calculate_gacha
+from services.v1.gacha_simulate import simulate_gacha
+from services.v1.analyze_pulls import pull_target
+from services.v1.cache_requests import set_cache, get_cache
 from docs_and_examples import doc_list
 import logging
 
@@ -51,7 +51,7 @@ def generate_api_key(request: Request):
 @limiter.limit("60/minute")
 def get_students(request: Request, user = Depends(verify_key), name: str | None = None, base_name: str | None = None, limit: int = 20, skip: int = 0, filters: StudentFilter = Depends()):
     
-    cache_key = f"{name}:{base_name}:{limit}:{skip}:{filters}"
+    cache_key = f"v1:{name}:{base_name}:{limit}:{skip}:{filters}"
 
     cached = get_cache(cache_key)
     if cached:

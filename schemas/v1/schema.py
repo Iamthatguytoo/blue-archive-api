@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field, model_validator
 from typing import Literal
 
+# region STUDENT_MODELS
 class Terrain(BaseModel):
     urban_terrain: str | None = None
     outdoor_terrain: str | None = None
@@ -29,6 +30,14 @@ class PaginatedResponseModel(BaseModel):
     limit: int
     students: list[StudentResponse]
 
+class StudentFilter(BaseModel):
+    school: str | None = None
+    position: str | None = None
+    damage_type: str | None = None
+
+# endregion 
+
+# region GACHA_MODELS
 class CalcRequest(BaseModel):
     pyroxene: int = Field(..., ge=120)
     rate_up: float = Field(0.007, gt=0, lt=1)
@@ -82,7 +91,4 @@ class AnalyzePullsResponse(BaseModel):
     confidence: float
     risk_level: Literal["low", "moderate", "high"]
 
-class StudentFilter(BaseModel):
-    school: str | None = None
-    position: str | None = None
-    damage_type: str | None = None
+# endregion

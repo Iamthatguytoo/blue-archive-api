@@ -2,7 +2,7 @@ from db.database import api_key_collection, student_collection
 from tests.conftest import FakeCursor
 from datetime import datetime, timezone
 import pytest
-from auth.key_verification import verify_key
+from auth.v1.key_verification import verify_key
 from fastapi import HTTPException
 
 def test_missing_api_key(client):

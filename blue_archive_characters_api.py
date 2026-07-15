@@ -3,11 +3,11 @@ from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from fastapi.encoders import jsonable_encoder
 import uvicorn as uv
-from middleware.rate_limit import setup_ip_rate_limiting
+from middleware.v1.rate_limit import setup_ip_rate_limiting
 from docs_and_examples import tags_metadata
 from api.v1.endpoints import blue_archive_api_v1_router
 from docs_and_examples import doc_list
-from services.health_check import create_health_check
+from services.v1.health_check import create_health_check
 import logging
 import os
 import time

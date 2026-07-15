@@ -5,7 +5,7 @@ def test_health(client, monkeypatch):
         def command(self, *args, **kwargs):
             return {"ok": 1.0}
 
-    monkeypatch.setattr("services.health_check.client.admin", MockAdminSuccess())
+    monkeypatch.setattr("services.v1.health_check.client.admin", MockAdminSuccess())
 
     res = client.get("/health")
     assert res.status_code == 200
@@ -23,7 +23,7 @@ def test_health_mongodb_failure(client, monkeypatch):
         def command(self, *args, **kwargs):
             raise PyMongoError("DB down")
 
-    monkeypatch.setattr("services.health_check.client.admin", MockAdmin())
+    monkeypatch.setattr("services.v1.health_check.client.admin", MockAdmin())
 
     res = client.get("/health")
 
