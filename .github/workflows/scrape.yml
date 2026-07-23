@@ -26,6 +26,6 @@ jobs:
                 ENVIRONMENT: production
                 CLIENT: ${{ secrets.CLIENT }}
                 DATABASE: ${{ secrets.DATABASE }}
-                API_COLLECTION_SCRAPER: ${{ secrets.COLLECTION }}
+                API_COLLECTION_SCRAPER: ${{ secrets.API_COLLECTION_SCRAPER }}
               run: |
                python -m db.blue_archive_characters

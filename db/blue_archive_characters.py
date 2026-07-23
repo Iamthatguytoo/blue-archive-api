@@ -19,7 +19,6 @@ def should_scrape():
     if not last_run:
         return True
 
-    # Make MongoDB datetime timezone-aware
     if last_run.tzinfo is None:
         last_run = last_run.replace(tzinfo=timezone.utc)
 
