@@ -16,11 +16,9 @@ import pytest
         ({"simulations": 1000, "pyroxene": 22000, "rate_up": 0}, 422),
     ],
 )
-def test_post_calculate(client, mock_api_key, payload, expected_status):
+def test_post_calculate(client, mock_async_api_key, payload, expected_status):
     res = client.post(
-        "/v1/gacha-simulate",
-        headers={"x-api-key": "test-key"},
-        json=payload
+        "/v2/gacha-simulate/spark", headers={"x-api-key": "test-key"}, json=payload
     )
 
     assert res.status_code == expected_status
@@ -33,4 +31,5 @@ def test_post_calculate(client, mock_api_key, payload, expected_status):
     elif expected_status == 422:
         assert "details" or "detail" in data
 
-#Activation: python -m pytest tests/test_simulate.py
+
+# Activation: python -m pytest tests/test_simulate.py

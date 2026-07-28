@@ -1,15 +1,15 @@
 import pandas as pd
+import asyncio
 from playwright.sync_api import sync_playwright
-from db.database import student_collection, scraper_collection
+from db.database_async import student_collection, scraper_collection
 from datetime import datetime, timezone, timedelta
 
 pd.set_option("display.max_rows", None)
 pd.set_option("display.max_columns", None)
 
-def should_scrape():
-    job = scraper_collection.find_one(
-        {"_id": "students_scraper"}
-    )
+
+async def should_scrape():
+    job = await scraper_collection.find_one({"_id": "students_scraper"})
 
     if not job:
         return True
@@ -28,27 +28,27 @@ def should_scrape():
 
     return True
 
-def update_scraper_status(status):
-    data = {
-        "status": status
-    }
+
+async def update_scraper_status(status):
+    data = {"status": status}
 
     if status == "success":
         data["last_run"] = datetime.now(timezone.utc)
 
-    scraper_collection.update_one(
-        {"_id": "students_scraper"},
-        {"$set": data},
-        upsert=True
+    await scraper_collection.update_one(
+        {"_id": "students_scraper"}, {"$set": data}, upsert=True
     )
 
-def get_characters():
 
-    if not should_scrape():
-            return
+async def get_characters():
+
+    if not await should_scrape():
+        return
 
     with sync_playwright() as p:
-        student_collection.create_index([("base_name", 1), ("variant", 1)], unique=True)
+        await student_collection.create_index(
+            [("base_name", 1), ("variant", 1)], unique=True
+        )
 
         browser = p.chromium.launch()
         try:
@@ -126,7 +126,9 @@ def get_characters():
                 )
 
             try:
-                result = student_collection.insert_many(student_list, ordered=False)
+                result = await student_collection.insert_many(
+                    student_list, ordered=False
+                )
                 print(f"Added {len(result.inserted_ids)} students to your db")
             except Exception:
                 print("Inserted some students, some duplicates were skipped.")
@@ -134,14 +136,15 @@ def get_characters():
             df = pd.DataFrame(student_list)
             print(df)
 
-            update_scraper_status("success")
+            await update_scraper_status("success")
         except Exception as e:
             print(f"Scraper failed: {e}")
-            update_scraper_status("failed")
+            await update_scraper_status("failed")
             raise
 
         finally:
             browser.close()
 
+
 if __name__ == "__main__":
-    get_characters()
+    asyncio.run(get_characters())

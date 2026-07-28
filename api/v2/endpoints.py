@@ -4,43 +4,43 @@ from schemas.v1.schema import (
     CalcRequest,
     CalcResponse,
     GachaPullSimulationRequest,
-    GachaPullSimulationResponse,
     PaginatedResponseModel,
     AnalyzePullsRequest,
     AnalyzePullsResponse,
 )
-from auth.v1.key_verification import verify_key
-from auth.v1.create_random_key import generate_key
+from schemas.v2.schema import GachaPullSimulationResponse
+from auth.v2.key_verification import verify_key
+from auth.v2.create_random_key import generate_key
 from middleware.v1.rate_limit import limiter
-from services.v1.retrieve_students import fetch_students
+from services.v2.retrieve_students import fetch_students
 from services.v1.gacha_calculate import calculate_gacha
-from services.v1.gacha_simulate import simulate_gacha
+from services.v2.gacha_simulate_spark import simulate_gacha_spark
 from services.v1.analyze_pulls import pull_target
 from services.v1.cache_requests import set_cache, get_cache
 from docs_and_examples import doc_list
 import logging
 
-logger = logging.getLogger("blue-archive-api-v1")
+logger = logging.getLogger("blue-archive-api-v2")
 
-blue_archive_api_v1_router = APIRouter()
+blue_archive_api_v2_router = APIRouter()
 
 
 ##Create keys for clients endpoint
-@blue_archive_api_v1_router.post(
+@blue_archive_api_v2_router.post(
     "/auth/register",
     tags=["keys"],
     summary=doc_list["keys"]["summary"],
     response_description=doc_list["keys"]["response_description"],
 )
 @limiter.limit("2/hour")
-def generate_api_key(request: Request):
+async def generate_api_key(request: Request):
 
-    api_key_data = generate_key()
+    api_key_data = await generate_key()
     return {**api_key_data, "message": "Copy this string now. You wont see it again"}
 
 
 ##Get student data from DB endpoint
-@blue_archive_api_v1_router.get(
+@blue_archive_api_v2_router.get(
     "/students",
     tags=["students"],
     summary=doc_list["students"]["summary"],
@@ -48,7 +48,7 @@ def generate_api_key(request: Request):
     response_model=PaginatedResponseModel,
 )
 @limiter.limit("60/minute")
-def get_students(
+async def get_students(
     request: Request,
     user=Depends(verify_key),
     name: str | None = None,
@@ -58,7 +58,7 @@ def get_students(
     filters: StudentFilter = Depends(),
 ):
 
-    cache_key = f"v1:{name}:{base_name}:{limit}:{skip}:{filters}"
+    cache_key = f"v2:{name}:{base_name}:{limit}:{skip}:{filters}"
 
     cached = get_cache(cache_key)
     if cached:
@@ -67,7 +67,7 @@ def get_students(
 
     logger.info("CACHE MISS")
 
-    result = fetch_students(
+    result = await fetch_students(
         filters=filters, name=name, base_name=base_name, limit=limit, skip=skip
     )
 
@@ -77,7 +77,7 @@ def get_students(
 
 
 ##Calculate gacha pulls endpoint
-@blue_archive_api_v1_router.post(
+@blue_archive_api_v2_router.post(
     "/gacha-calculate",
     tags=["gacha"],
     summary=doc_list["gacha-calculate"]["summary"],
@@ -96,15 +96,15 @@ def calculate_odds(
 
 
 ##Simulate gacha endpoint
-@blue_archive_api_v1_router.post(
-    "/gacha-simulate",
+@blue_archive_api_v2_router.post(
+    "/gacha-simulate/spark",
     tags=["gacha"],
     summary=doc_list["gacha-simulate"]["summary"],
     response_description=doc_list["gacha-simulate"]["response_description"],
     response_model=GachaPullSimulationResponse,
 )
 @limiter.limit("15/minute")
-def simulate_odds(
+def simulate_odds_spark(
     request: Request,
     all_pulls: GachaPullSimulationRequest = Body(
         example=doc_list["gacha-simulate"]["example"]
@@ -112,7 +112,7 @@ def simulate_odds(
     user=Depends(verify_key),
 ):
 
-    result = simulate_gacha(
+    result = simulate_gacha_spark(
         simulations=all_pulls.simulations,
         pyroxene=all_pulls.pyroxene,
         rate_up=all_pulls.rate_up,
@@ -125,7 +125,7 @@ def simulate_odds(
 
 
 ##Calculate pulls needed for a target probability endpoint
-@blue_archive_api_v1_router.post(
+@blue_archive_api_v2_router.post(
     "/analyze-pulls",
     tags=["gacha"],
     summary=doc_list["analyze-pulls"]["summary"],

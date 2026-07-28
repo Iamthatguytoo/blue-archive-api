@@ -3,10 +3,10 @@ from pymongo.errors import PyMongoError
 
 def test_health(client, monkeypatch):
     class MockAdminSuccess:
-        def command(self, *args, **kwargs):
+        async def command(self, *args, **kwargs):
             return {"ok": 1.0}
 
-    monkeypatch.setattr("services.v1.health_check.client.admin", MockAdminSuccess())
+    monkeypatch.setattr("services.v2.health_check.client.admin", MockAdminSuccess())
 
     res = client.get("/health")
     assert res.status_code == 200
@@ -21,10 +21,10 @@ def test_health(client, monkeypatch):
 
 def test_health_mongodb_failure(client, monkeypatch):
     class MockAdmin:
-        def command(self, *args, **kwargs):
+        async def command(self, *args, **kwargs):
             raise PyMongoError("DB down")
 
-    monkeypatch.setattr("services.v1.health_check.client.admin", MockAdmin())
+    monkeypatch.setattr("services.v2.health_check.client.admin", MockAdmin())
 
     res = client.get("/health")
 
@@ -35,4 +35,4 @@ def test_health_mongodb_failure(client, monkeypatch):
     assert data["detail"]["connection_checks"]["mongodb"] is False
 
 
-# Activation: python -m pytest tests/v1/test_health.py
+# Activation: python -m pytest tests/v2/test_health.py

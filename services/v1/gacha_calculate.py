@@ -1,5 +1,6 @@
 import math
 
+
 def calculate_gacha(pyroxene: int, rate_up: float):
     pulls = pyroxene // 120
     fail_prob = math.pow(1 - rate_up, pulls)

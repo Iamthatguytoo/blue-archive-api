@@ -2,7 +2,7 @@ from utils.gacha_pulls import pull_spark
 import statistics
 
 
-def simulate_gacha(
+def simulate_gacha_spark(
     simulations: int,
     pyroxene: int,
     rate_up: float,
@@ -15,18 +15,27 @@ def simulate_gacha(
     total_off_banner_3_stars = []
     spark_count = 0
     total_successes = []
+    total_one_stars = []
+    total_two_stars = []
+    total_three_stars = []
+    example_pull_log = None
 
     pulls_per_trial = pyroxene // 120
 
-    for _ in range(simulations):
+    for sim in range(simulations):
         pulls = pulls_per_trial
         success = False
         pull_count = 0
         three_star_pity_count = 0
         rate_up_natural = False
         off_banner_3_stars = 0
+        pull_log = []
+        one_stars = 0
+        two_stars = 0
+        three_stars = 0
 
         for start in range(0, pulls, 10):
+            batch_log = []
             pulls_in_batch = min(10, pulls - start)
 
             for _ in range(pulls_in_batch):
@@ -45,21 +54,38 @@ def simulate_gacha(
                 three_star_pity_count = result["three_star_pity_count"]
                 off_banner_3_stars += result["off_banner"]
 
+                if result["rarity"] == 3:
+                    three_stars += 1
+                elif result["rarity"] == 2:
+                    two_stars += 1
+                else:
+                    one_stars += 1
+
                 if result["spark"]:
                     spark_count += 1
+
+                batch_log.append(f"{result['rarity']}★")
 
                 if result["success"]:
                     success = True
                     rate_up_natural = result["rate_up_natural"]
                     break
 
+            pull_log.append(batch_log)
+
             if success:
                 break
+
+        if sim == 0:
+            example_pull_log = pull_log[0]
 
         total_pulls.append(pull_count)
         total_successes.append(success)
         total_rate_up_natural.append(rate_up_natural)
         total_off_banner_3_stars.append(off_banner_3_stars)
+        total_one_stars.append(one_stars)
+        total_two_stars.append(two_stars)
+        total_three_stars.append(three_stars)
 
     max_pulls = max(total_pulls)
     min_pulls = min(total_pulls)
@@ -80,6 +106,12 @@ def simulate_gacha(
     )
     rate_up_natural_count = total_rate_up_natural.count(True)
     average_off_banner_3stars = round(sum(total_off_banner_3_stars) / simulations, 2)
+    all_one_stars = sum(total_one_stars)
+    all_two_stars = sum(total_two_stars)
+    all_three_stars = sum(total_three_stars)
+    average_one_stars = round(sum(total_one_stars) / simulations, 2)
+    average_two_stars = round(sum(total_two_stars) / simulations, 2)
+    average_three_stars = round(sum(total_three_stars) / simulations, 2)
 
     return {
         "simulations_conducted": simulations,
@@ -102,4 +134,11 @@ def simulate_gacha(
         "min_pulls": min_pulls,
         "natural_rate_up_obtained": rate_up_natural_count,
         "average_off_banner_3stars": average_off_banner_3stars,
+        "all_one_stars": all_one_stars,
+        "all_two_stars": all_two_stars,
+        "all_three_stars": all_three_stars,
+        "average_one_stars": average_one_stars,
+        "average_two_stars": average_two_stars,
+        "average_three_stars": average_three_stars,
+        "example_pull_log": example_pull_log,
     }

@@ -1,9 +1,9 @@
-from db.database import api_key_collection
+from db.database_async import api_key_collection
 from datetime import datetime, timezone
 import secrets
 
 
-def generate_key(tier="free"):
+async def generate_key(tier="free"):
     limits = {
         "free": {"daily_limit": 1000},
     }
@@ -12,7 +12,7 @@ def generate_key(tier="free"):
 
     while True:
         api_key = "sk_" + secrets.token_hex(16)
-        if not api_key_collection.find_one({"api_key": api_key}):
+        if not await api_key_collection.find_one({"api_key": api_key}):
             break
 
     today = datetime.now(timezone.utc).date().isoformat()
@@ -26,7 +26,7 @@ def generate_key(tier="free"):
         "created_at": datetime.now(timezone.utc),
     }
 
-    api_key_collection.insert_one(data)
+    await api_key_collection.insert_one(data)
 
     return {
         "api_key": data["api_key"],

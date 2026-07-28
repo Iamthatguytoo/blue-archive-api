@@ -58,4 +58,7 @@ jobs:
           API_COLLECTION_KEYS: BLUE_ARCHIVE_API_KEYS
           API_COLLECTION_SCRAPER: BLUE_ARCHIVE_API_SCRAPER
         run: |
-          pytest tests/v1
+          pytest tests/v2
+          pytest tests/test_analyze.py 
+          pytest tests/test_simulate.py 
+          pytest tests/test_calculate.py 

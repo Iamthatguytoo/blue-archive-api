@@ -16,10 +16,10 @@ Interactive docs: /docs  or  /redoc
 
 ## Why use this API?
 
-- **Are you planning pulls for a new banner?** Use `/v1/gacha-calculate` to instantly see if your current Pyroxenes are enough to get the rate-up naturally, or whether you'll need to spark.
-- **Are you not sure if you'll need to spark?** `/v1/gacha-simulate` can run up to 1,000 Monte Carlo trial pulls so you can see realistic odds, average pulls to success, and how often sparking is actually needed.
-- **Do you want to know your confidence level?** `/v1/analyze-pulls` works in reverse. You give it a target probability (e.g. 80% chance) and it tells you exactly how many pulls and Pyroxenes you need.
-- **Are you looking for specific students?** `/v1/students` lets you filter by school, weapon, terrain rating, damage type, and more — great for team building tools or wikis.
+- **Are you planning pulls for a new banner?** Use `/v2/gacha-calculate` to instantly see if your current Pyroxenes are enough to get the rate-up naturally, or whether you'll need to spark.
+- **Are you not sure if you'll need to spark?** `/v2/gacha-simulate/spark` can run up to 1,000 Monte Carlo trial pulls so you can see realistic odds, average pulls to success, and how often sparking is actually needed.
+- **Do you want to know your confidence level?** `/v2/analyze-pulls` works in reverse. You give it a target probability (e.g. 80% chance) and it tells you exactly how many pulls and Pyroxenes you need.
+- **Are you looking for specific students?** `/v2/students` lets you filter by school, weapon, terrain rating, damage type, and more — great for team building tools or wikis.
 
 ---
 
@@ -27,7 +27,7 @@ Interactive docs: /docs  or  /redoc
 
 **1. Register for a free API key:**
 ```bash
-curl -X POST https://blue-archive-api--JohnArchive.replit.app/v1/auth/register
+curl -X POST https://blue-archive-api--JohnArchive.replit.app/v2/auth/register
 ```
 
 **2. Save your key** — it's only shown once.
@@ -35,7 +35,7 @@ curl -X POST https://blue-archive-api--JohnArchive.replit.app/v1/auth/register
 **3. Make your first request:**
 ```bash
 curl -H "x-api-key: YOUR_KEY" \
-"https://blue-archive-api--JohnArchive.replit.app/v1/students?name=Hina"
+"https://blue-archive-api--JohnArchive.replit.app/v2/students?name=Hina"
 ```
 
 ---
@@ -66,10 +66,10 @@ curl -H "x-api-key: YOUR_KEY" \
 Each endpoint has a per-IP rate limit:
 
 ```
-/v1/auth/register                        → 2/hour
-/v1/students                             → 60/minute
-/v1/gacha-calculate and /v1/gacha-simulate  → 15/minute
-/v1/analyze-pulls                        → 30/minute
+/v2/auth/register                        → 2/hour
+/v2/students                             → 60/minute
+/v2/gacha-calculate and /v2/gacha-simulate/spark  → 15/minute
+/v2/analyze-pulls                        → 30/minute
 ```
 
 ---
@@ -86,23 +86,107 @@ All probability values use decimal format:
 
 ---
 
+## Project Structure
+```
+blue_archive_api/
+├── .github/
+│   └── workflows/
+│       ├── pytests.yml
+│       └── scrape.yml
+├── api/
+│   ├── v1/
+│   │   ├── __init__.py
+│   │   └── endpoints.py
+│   └── v2/
+│       ├── __init__.py
+│       └── endpoints.py
+├── auth/
+│   ├── v1/
+│   │   ├── __init__.py
+│   │   ├── create_random_key.py
+│   │   └── key_verification.py
+│   └── v2/
+│       ├── __init__.py
+│       ├── create_random_key.py
+│       └── key_verification.py
+├── db/
+│   ├── __init__.py
+│   ├── blue_archive_characters.py
+│   ├── database.py
+│   ├── database_async.py
+│   └── settings.py
+├── middleware/
+│   └── v1/
+│       ├── __init__.py
+│       └── rate_limit.py
+├── schemas/
+│   ├── v1/
+│   │   ├── __init__.py
+│   │   └── schema.py
+│   └── v2/
+│       ├── __init__.py
+│       └── schema.py
+├── services/
+│   ├── v1/
+│   │   ├── __init__.py
+│   │   ├── analyze_pulls.py
+│   │   ├── cache_requests.py
+│   │   ├── gacha_calculate.py
+│   │   ├── gacha_simulate.py
+│   │   ├── health_check.py
+│   │   └── retrieve_students.py
+│   └── v2/
+│       ├── __init__.py
+│       ├── gacha_simulate_spark.py
+│       ├── health_check.py
+│       └── retrieve_students.py
+├── tests/
+│   ├── __init__.py
+│   ├── conftest.py
+│   ├── test_analyze.py
+│   ├── test_calculate.py
+│   └── test_simulate.py
+│   ├── v1/
+│   │   ├── __init__.py
+│   │   ├── test_auth.py
+│   │   ├── test_health.py
+│   │   └── test_student.py
+│   └── v2/
+│       ├── __init__.py
+│       ├── test_auth.py
+│       ├── test_health.py
+│       └── test_student.py
+├── utils/
+│   ├── gacha_pulls.py
+│   └── serialize_students.py
+├── blue_archive_characters_api.py
+├── docs_and_examples.py
+├── requirements.txt
+├── .gitignore
+├── .dockerignore
+├── .replit
+└── README.md
+```
+
+---
+
 ## API Requests
 
 ### Register an API key
 
 ```bash
-curl -X POST https://blue-archive-api--JohnArchive.replit.app/v1/auth/register
+curl -X POST https://blue-archive-api--JohnArchive.replit.app/v2/auth/register
 ```
 
 Windows (PowerShell):
 ```powershell
-Invoke-RestMethod -Method POST -Uri "https://blue-archive-api--JohnArchive.replit.app/v1/auth/register"
+Invoke-RestMethod -Method POST -Uri "https://blue-archive-api--JohnArchive.replit.app/v2/auth/register"
 ```
 
 Python:
 ```python
 import requests
-res = requests.post("https://blue-archive-api--JohnArchive.replit.app/v1/auth/register")
+res = requests.post("https://blue-archive-api--JohnArchive.replit.app/v2/auth/register")
 print(res.json())
 ```
 
@@ -127,13 +211,13 @@ print(res.json())
 
 ```bash
 curl -H "x-api-key: YOUR_KEY" \
-"https://blue-archive-api--JohnArchive.replit.app/v1/students?name=Hina"
+"https://blue-archive-api--JohnArchive.replit.app/v2/students?name=Hina"
 ```
 
 Windows (PowerShell):
 ```powershell
 Invoke-WebRequest `
-  -Uri "https://blue-archive-api--JohnArchive.replit.app/v1/students?name=Hina" `
+  -Uri "https://blue-archive-api--JohnArchive.replit.app/v2/students?name=Hina" `
   -Headers @{ "x-api-key" = "YOUR_API_KEY" }
 ```
 
@@ -141,7 +225,7 @@ Python:
 ```python
 import requests
 res = requests.get(
-    "https://blue-archive-api--JohnArchive.replit.app/v1/students",
+    "https://blue-archive-api--JohnArchive.replit.app/v2/students",
     headers={"x-api-key": "YOUR_API_KEY"},
     params={"name": "Hina"}
 )
@@ -189,19 +273,19 @@ This is an example of fetching back-row mystic-type students from Millennium ski
 
 ```bash
 curl -H "x-api-key: YOUR_API_KEY" \
-"https://blue-archive-api--JohnArchive.replit.app/v1/students?school=millennium&damage_type=mystic&position=back&skip=2&limit=1"
+"https://blue-archive-api--JohnArchive.replit.app/v2/students?school=millennium&damage_type=mystic&position=back&skip=2&limit=1"
 ```
 Windows (PowerShell):
 ```powershell
 Invoke-WebRequest `
-  -Uri "https://blue-archive-api--JohnArchive.replit.app/v1/students?school=millennium&damage_type=mystic&position=back&skip=2&limit=1" `
+  -Uri "https://blue-archive-api--JohnArchive.replit.app/v2/students?school=millennium&damage_type=mystic&position=back&skip=2&limit=1" `
   -Headers @{ "x-api-key" = "YOUR_API_KEY" }
 ```
 Python:
 ```python
 import requests
 res = requests.get(
-    "https://blue-archive-api--JohnArchive.replit.app/v1/students",
+    "https://blue-archive-api--JohnArchive.replit.app/v2/students",
     headers={"x-api-key": "YOUR_API_KEY"},
     params={
         "school": "millennium",
@@ -254,7 +338,7 @@ print(res.json())
 Use this when you want to know: "I have X Pyroxenes — what are my chances?"
 
 ```bash
-curl -X POST "https://blue-archive-api--JohnArchive.replit.app/v1/gacha-calculate" \
+curl -X POST "https://blue-archive-api--JohnArchive.replit.app/v2/gacha-calculate" \
 -H "Content-Type: application/json" \
 -H "x-api-key: YOUR_API_KEY" \
 -d '{
@@ -267,7 +351,7 @@ Windows (PowerShell):
 ```powershell
 Invoke-WebRequest `
 -Method POST `
--Uri "https://blue-archive-api--JohnArchive.replit.app/v1/gacha-calculate" `
+-Uri "https://blue-archive-api--JohnArchive.replit.app/v2/gacha-calculate" `
 -Headers @{
   "Content-Type" = "application/json"
   "x-api-key" = "YOUR_API_KEY"
@@ -282,7 +366,7 @@ Python:
 ```python
 import requests
 res = requests.post(
-    "https://blue-archive-api--JohnArchive.replit.app/v1/gacha-calculate",
+    "https://blue-archive-api--JohnArchive.replit.app/v2/gacha-calculate",
     headers={"x-api-key": "YOUR_API_KEY"},
     json={"pyroxene": 24000, "rate_up": 0.007}
 )
@@ -311,7 +395,7 @@ print(res.json())
 Use this when you want realistic pull statistics across many trials.
 
 ```bash
-curl -X POST "https://blue-archive-api--JohnArchive.replit.app/v1/gacha-simulate" \
+curl -X POST "https://blue-archive-api--JohnArchive.replit.app/v2/gacha-simulate/spark" \
 -H "Content-Type: application/json" \
 -H "x-api-key: YOUR_API_KEY" \
 -d '{
@@ -328,7 +412,7 @@ Windows (PowerShell):
 ```powershell
 Invoke-WebRequest `
 -Method POST `
--Uri "https://blue-archive-api--JohnArchive.replit.app/v1/gacha-simulate" `
+-Uri "https://blue-archive-api--JohnArchive.replit.app/v2/gacha-simulate/spark" `
 -Headers @{
   "Content-Type" = "application/json"
   "x-api-key" = "YOUR_API_KEY"
@@ -347,7 +431,7 @@ Python:
 ```python
 import requests
 res = requests.post(
-    "https://blue-archive-api--JohnArchive.replit.app/v1/gacha-simulate",
+    "https://blue-archive-api--JohnArchive.replit.app/v2/gacha-simulate/spark",
     headers={"x-api-key": "YOUR_API_KEY"},
     json={
         "simulations": 100,
@@ -369,15 +453,33 @@ print(res.json())
   "simulations_conducted": 100,
   "pulls_per_trial": 200,
   "success_rate": 1,
-  "average_pulls_to_success": 119.09,
-  "median_pulls_to_success": 124.5,
-  "succesful_runs": 100,
+  "average_pulls_to_success": 30.3,
+  "median_pulls_to_success": 19.5,
+  "successful_runs": 100,
   "zero_success": 0,
-  "trials_reached_spark": 26,
-  "max_pulls": 200,
-  "min_pulls": 2,
-  "rate_up_obtained": 74,
-  "average_off_banner_3stars": 2.77
+  "trials_reached_spark": 0,
+  "max_pulls": 125,
+  "min_pulls": 1,
+  "natural_rate_up_obtained": 100,
+  "average_off_banner_3stars": 0.04,
+  "all_one_stars": 2382,
+  "all_two_stars": 544,
+  "all_three_stars": 104,
+  "average_one_stars": 23.82,
+  "average_two_stars": 5.44,
+  "average_three_stars": 1.04,
+  "example_pull_log": [
+    "1★",
+    "2★",
+    "1★",
+    "1★",
+    "1★",
+    "1★",
+    "1★",
+    "1★",
+    "2★",
+    "1★"
+  ]
 }
 ```
 
@@ -390,7 +492,7 @@ print(res.json())
 Use this when you want to know: "How many Pyroxenes do I need for an 80% chance?"
 
 ```bash
-curl -X POST "https://blue-archive-api--JohnArchive.replit.app/v1/analyze-pulls" \
+curl -X POST "https://blue-archive-api--JohnArchive.replit.app/v2/analyze-pulls" \
 -H "Content-Type: application/json" \
 -H "x-api-key: YOUR_API_KEY" \
 -d '{
@@ -403,7 +505,7 @@ Windows (PowerShell):
 ```powershell
 Invoke-WebRequest `
 -Method POST `
--Uri "https://blue-archive-api--JohnArchive.replit.app/v1/analyze-pulls" `
+-Uri "https://blue-archive-api--JohnArchive.replit.app/v2/analyze-pulls" `
 -Headers @{
   "Content-Type" = "application/json"
   "x-api-key" = "YOUR_API_KEY"
@@ -418,7 +520,7 @@ Python:
 ```python
 import requests
 res = requests.post(
-    "https://blue-archive-api--JohnArchive.replit.app/v1/analyze-pulls",
+    "https://blue-archive-api--JohnArchive.replit.app/v2/analyze-pulls",
     headers={"x-api-key": "YOUR_API_KEY"},
     json={"probability": 0.8, "rate_up": 0.007}
 )
@@ -448,10 +550,10 @@ print(res.json())
 - `GET /health` — Health check, returns server status (useful for uptime monitoring)
 
 ### Authentication
-- `POST /v1/auth/register` — Generate a new API key (returns `sk_*` key, shown only once)
+- `POST /v2/auth/register` — Generate a new API key (returns `sk_*` key, shown only once)
 
 ### Student Data
-- `GET /v1/students` — Retrieve paginated student data with filtering
+- `GET /v2/students` — Retrieve paginated student data with filtering
 
   | Parameter | Type | Description |
   |-----------|------|-------------|
@@ -467,7 +569,7 @@ print(res.json())
   | `skip` | int | Results to skip for pagination (default: 0) |
 
 ### Gacha Calculations
-- `POST /v1/gacha-calculate` — Calculate pull odds from Pyroxenes
+- `POST /v2/gacha-calculate` — Calculate pull odds from Pyroxenes
   - Input:
     
   | Field | Type | Description |
@@ -486,7 +588,7 @@ print(res.json())
   | `chance_need_spark` | float | % chance you'll need to spark to guarantee the rate-up |
 
 ### Gacha Simulation
-- `POST /v1/gacha-simulate` — Run Monte Carlo gacha simulations (up to 1,000 trials)
+- `POST /v2/gacha-simulate/spark` — Run Monte Carlo gacha simulations (up to 1,000 trials)
   - Input: 
 
   | Field | Type | Description |
@@ -513,10 +615,13 @@ print(res.json())
   | `max_pulls` | int | Most amount of pulls used in a single trial |
   | `min_pulls` | int | Least amount of pulls used in a single trial |
   | `rate_up_obtained` | int | Total rate-up students obtained across all trials |
-  | `average_off_banner_3stars` | float | Average non-rate-up 3 stars/★ students per trial |
+  | `average_off_banner_3stars` | float | Average number of non-rate-up 3★ students obtained per simulation |
+  | `all_one/two/three_stars` | int | Total number of 1★, 2★, and 3★ students obtained across all simulations |
+  | `average_one/two/three_stars` | float | Average number of 1★, 2★, and 3★ students obtained per simulation |
+  | `example_pull_log` | list[str] | Example pull results from the first simulation trial, grouped by 10-pull batches |
 
 ### Pull Analysis
-- `POST /v1/analyze-pulls` — Reverse probability: find pulls needed for a target confidence
+- `POST /v2/analyze-pulls` — Reverse probability: find pulls needed for a target confidence
   - Input: 
 
   | Field | Type | Description |
@@ -542,7 +647,7 @@ print(res.json())
 ## Notes
 
 - Your API key is shown only once at registration. Store and keep the key somewhere safe
-- All endpoints except `/`, `/health`, and `/v1/auth/register` require the `x-api-key` header
+- All endpoints except `/`, `/health`, and `/v2/auth/register` require the `x-api-key` header
 - All keys have a 1,000 request/day limit, reset daily
 - Student data responses are cached server-side for fast repeated queries
 

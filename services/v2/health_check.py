@@ -1,14 +1,14 @@
-from db.database import client
+from db.database_async import client
 from db.settings import settings
 from pymongo.errors import PyMongoError
 from fastapi import HTTPException
 from datetime import datetime, UTC
 
 
-def create_health_check():
+async def create_health_check():
     timestamp = datetime.now(UTC)
     try:
-        client.admin.command("ping")
+        await client.admin.command("ping")
 
         return {
             "status": "healthy",

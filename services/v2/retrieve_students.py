@@ -1,10 +1,10 @@
-from db.database import student_collection
-from pydantic import BaseModel
+from db.database_async import student_collection
 from utils.serialize_students import serialize_student
+from pydantic import BaseModel
 import re
 
 
-def fetch_students(
+async def fetch_students(
     filters: BaseModel,
     name: str | None = None,
     base_name: str | None = None,
@@ -20,7 +20,7 @@ def fetch_students(
             "base_name": {"$regex": f"^{re.escape(base_name)}$", "$options": "i"}
         }
 
-        count = student_collection.count_documents(exact_query)
+        count = await student_collection.count_documents(exact_query)
 
         if count:
             query.update(exact_query)
@@ -29,10 +29,12 @@ def fetch_students(
 
     query.update(filters.model_dump(exclude_none=True))
 
-    total = student_collection.count_documents(query)
+    total = await student_collection.count_documents(query)
 
-    student_cursor = student_collection.find(query).skip(skip).limit(limit)
+    cursor = student_collection.find(query).skip(skip).limit(limit)
 
-    students = [serialize_student(s) for s in student_cursor]
+    students = await cursor.to_list(length=limit)
+
+    students = [serialize_student(s) for s in students]
 
     return {"total": total, "skip": skip, "limit": limit, "students": students}

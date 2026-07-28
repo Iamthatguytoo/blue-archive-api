@@ -1,7 +1,7 @@
-from pymongo import MongoClient
+from pymongo import AsyncMongoClient
 from db.settings import settings
 
-client = MongoClient(settings.CLIENT, tz_aware=True)
+client = AsyncMongoClient(settings.CLIENT, tz_aware=True)
 db = client[settings.DATABASE]
 
 student_collection = db[settings.API_COLLECTION]

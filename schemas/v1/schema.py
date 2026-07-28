@@ -1,11 +1,13 @@
 from pydantic import BaseModel, Field, model_validator
 from typing import Literal
 
+
 # region STUDENT_MODELS
 class Terrain(BaseModel):
     urban_terrain: str | None = None
     outdoor_terrain: str | None = None
     indoor_terrain: str | None = None
+
 
 class StudentResponse(BaseModel):
     name: str | None = None
@@ -24,23 +26,28 @@ class StudentResponse(BaseModel):
 
     terrain: Terrain
 
+
 class PaginatedResponseModel(BaseModel):
     total: int
     skip: int
     limit: int
     students: list[StudentResponse]
 
+
 class StudentFilter(BaseModel):
     school: str | None = None
     position: str | None = None
     damage_type: str | None = None
 
-# endregion 
+
+# endregion
+
 
 # region GACHA_MODELS
 class CalcRequest(BaseModel):
     pyroxene: int = Field(..., ge=120)
     rate_up: float = Field(0.007, gt=0, lt=1)
+
 
 class CalcResponse(BaseModel):
     pulls: int
@@ -48,6 +55,7 @@ class CalcResponse(BaseModel):
     pulls_to_spark: int
     chance_get_rate_up_naturally: float
     chance_need_spark: float
+
 
 class GachaPullSimulationRequest(BaseModel):
     simulations: int = Field(..., gt=0, le=1000)
@@ -67,6 +75,7 @@ class GachaPullSimulationRequest(BaseModel):
 
         return self
 
+
 class GachaPullSimulationResponse(BaseModel):
     simulations_conducted: int
     pulls_per_trial: int
@@ -81,14 +90,17 @@ class GachaPullSimulationResponse(BaseModel):
     natural_rate_up_obtained: int
     average_off_banner_3stars: float
 
+
 class AnalyzePullsRequest(BaseModel):
     probability: float = Field(..., ge=0, le=1)
     rate_up: float = Field(0.007, gt=0, le=1)
+
 
 class AnalyzePullsResponse(BaseModel):
     required_pulls: int
     pyroxene_needed: int
     confidence: float
     risk_level: Literal["low", "moderate", "high"]
+
 
 # endregion
