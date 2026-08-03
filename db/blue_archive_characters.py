@@ -42,7 +42,7 @@ async def update_scraper_status(status):
 
 async def get_characters():
 
-    if should_scrape():
+    if not await should_scrape():
         return
 
     async with async_playwright() as p:

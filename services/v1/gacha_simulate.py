@@ -38,8 +38,8 @@ def simulate_gacha(
                     pull_count=pull_count,
                     spark_threshold=spark_threshold,
                     pity_threshold=pity_threshold,
-                    rate_up=rate_up,
-                    rate_up_3_star=rate_up_3_star,
+                    featured_rate=rate_up,
+                    three_star_rate=rate_up_3_star,
                 )
 
                 three_star_pity_count = result["three_star_pity_count"]
@@ -50,7 +50,7 @@ def simulate_gacha(
 
                 if result["success"]:
                     success = True
-                    rate_up_natural = result["rate_up_natural"]
+                    rate_up_natural = result["natural_featured"]
                     break
 
             if success:

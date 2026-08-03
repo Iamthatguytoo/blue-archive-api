@@ -1,30 +1,38 @@
-from utils.gacha_pulls import pull_spark
+from utils.gacha_pulls import pull_pity
 import statistics
 
 
-def simulate_gacha_spark(
+def simulate_gacha_pity(
     simulations: int,
     pyroxene: int,
     featured_rate: float,
     three_star_rate: float,
     pity_threshold: int,
-    spark_threshold: int,
 ):
     total_pulls = []
-    total_natural_featured = []
+    total_natural_featured_results = []
     total_off_banner_3_stars = []
-    spark_count = 0
     total_successes = []
     total_one_stars = []
     total_two_stars = []
     total_three_stars = []
     example_pull_log = None
 
-    pulls_per_trial = pyroxene // 120
+    paid_pulls = pyroxene // 120
+
+    available_pulls = 0
+    paid_pulls_used = 0
+
+    while paid_pulls_used < paid_pulls:
+        available_pulls += 1
+        paid_pulls_used += 1
+
+        if available_pulls in (70, 130, 150, 170):
+            available_pulls += 10
 
     for sim in range(simulations):
-        pulls = pulls_per_trial
         success = False
+        banner_pity = 0
         pull_count = 0
         three_star_pity_count = 0
         natural_featured = False
@@ -34,23 +42,24 @@ def simulate_gacha_spark(
         two_stars = 0
         three_stars = 0
 
-        for start in range(0, pulls, 10):
+        for start in range(0, available_pulls, 10):
             batch_log = []
-            pulls_in_batch = min(10, pulls - start)
+            pulls_in_batch = min(10, available_pulls - start)
 
             for _ in range(pulls_in_batch):
                 pull_count += 1
+                banner_pity += 1
                 three_star_pity_count += 1
 
-                result = pull_spark(
+                result = pull_pity(
                     three_star_pity_count=three_star_pity_count,
-                    pull_count=pull_count,
-                    spark_threshold=spark_threshold,
+                    banner_pity=banner_pity,
                     pity_threshold=pity_threshold,
                     featured_rate=featured_rate,
                     three_star_rate=three_star_rate,
                 )
 
+                banner_pity = result["banner_pity"]
                 three_star_pity_count = result["three_star_pity_count"]
                 off_banner_3_stars += result["off_banner"]
 
@@ -60,9 +69,6 @@ def simulate_gacha_spark(
                     two_stars += 1
                 else:
                     one_stars += 1
-
-                if result["spark"]:
-                    spark_count += 1
 
                 batch_log.append(f"{result['rarity']}★")
 
@@ -81,7 +87,7 @@ def simulate_gacha_spark(
 
         total_pulls.append(pull_count)
         total_successes.append(success)
-        total_natural_featured.append(natural_featured)
+        total_natural_featured_results.append(natural_featured)
         total_off_banner_3_stars.append(off_banner_3_stars)
         total_one_stars.append(one_stars)
         total_two_stars.append(two_stars)
@@ -104,7 +110,7 @@ def simulate_gacha_spark(
     median_pulls_to_success = (
         statistics.median(successful_pull_counts) if successful_pull_counts else None
     )
-    natural_featured_count = total_natural_featured.count(True)
+    natural_featured_count = total_natural_featured_results.count(True)
     average_off_banner_3stars = round(sum(total_off_banner_3_stars) / simulations, 2)
     all_one_stars = sum(total_one_stars)
     all_two_stars = sum(total_two_stars)
@@ -115,7 +121,7 @@ def simulate_gacha_spark(
 
     return {
         "simulations_conducted": simulations,
-        "pulls_per_trial": pulls_per_trial,
+        "pulls_per_trial": available_pulls,
         "success_rate": success_trials,
         "average_pulls_to_success": (
             round(average_pulls_to_success, 2)
@@ -129,7 +135,6 @@ def simulate_gacha_spark(
         ),
         "successful_runs": successful_runs,
         "zero_success": zero_success,
-        "trials_reached_spark": spark_count,
         "max_pulls": max_pulls,
         "min_pulls": min_pulls,
         "natural_featured_trials_count": natural_featured_count,

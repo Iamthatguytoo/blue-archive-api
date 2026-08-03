@@ -3,8 +3,8 @@ from schemas.v1.schema import (
     StudentFilter,
     CalcRequest,
     CalcResponse,
-    GachaPullSimulationRequest,
-    GachaPullSimulationResponse,
+    GachaPullSparkSimulationRequest,
+    GachaPullSparkSimulationResponse,
     PaginatedResponseModel,
     AnalyzePullsRequest,
     AnalyzePullsResponse,
@@ -99,15 +99,15 @@ def calculate_odds(
 @blue_archive_api_v1_router.post(
     "/gacha-simulate",
     tags=["gacha"],
-    summary=doc_list["gacha-simulate"]["summary"],
-    response_description=doc_list["gacha-simulate"]["response_description"],
-    response_model=GachaPullSimulationResponse,
+    summary=doc_list["gacha-simulate-spark"]["summary"],
+    response_description=doc_list["gacha-simulate-spark"]["response_description"],
+    response_model=GachaPullSparkSimulationResponse,
 )
 @limiter.limit("15/minute")
 def simulate_odds(
     request: Request,
-    all_pulls: GachaPullSimulationRequest = Body(
-        example=doc_list["gacha-simulate"]["example"]
+    all_pulls: GachaPullSparkSimulationRequest = Body(
+        example=doc_list["gacha-simulate-spark"]["example"]
     ),
     user=Depends(verify_key),
 ):
@@ -115,13 +115,13 @@ def simulate_odds(
     result = simulate_gacha(
         simulations=all_pulls.simulations,
         pyroxene=all_pulls.pyroxene,
-        rate_up=all_pulls.rate_up,
-        rate_up_3_star=all_pulls.rate_up_3_star,
+        rate_up=all_pulls.featured_rate,
+        rate_up_3_star=all_pulls.three_star_rate,
         pity_threshold=all_pulls.pity_threshold,
         spark_threshold=all_pulls.spark_threshold,
     )
 
-    return GachaPullSimulationResponse(**result)
+    return GachaPullSparkSimulationResponse(**result)
 
 
 ##Calculate pulls needed for a target probability endpoint

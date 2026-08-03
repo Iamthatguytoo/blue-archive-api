@@ -3,18 +3,23 @@ from schemas.v1.schema import (
     StudentFilter,
     CalcRequest,
     CalcResponse,
-    GachaPullSimulationRequest,
+    GachaPullSparkSimulationRequest,
     PaginatedResponseModel,
     AnalyzePullsRequest,
     AnalyzePullsResponse,
 )
-from schemas.v2.schema import GachaPullSimulationResponse
+from schemas.v2.schema import (
+    GachaPullSparkSimulationResponse,
+    GachaPullPitySimulationRequest,
+    GachaPullPitySimulationResponse
+    )
 from auth.v2.key_verification import verify_key
 from auth.v2.create_random_key import generate_key
 from middleware.v1.rate_limit import limiter
 from services.v2.retrieve_students import fetch_students
 from services.v1.gacha_calculate import calculate_gacha
 from services.v2.gacha_simulate_spark import simulate_gacha_spark
+from services.v2.gacha_simulate_pity import simulate_gacha_pity
 from services.v1.analyze_pulls import pull_target
 from services.v1.cache_requests import set_cache, get_cache
 from docs_and_examples import doc_list
@@ -95,19 +100,19 @@ def calculate_odds(
     return CalcResponse(**result)
 
 
-##Simulate gacha endpoint
+##Simulate gacha(spark) endpoint
 @blue_archive_api_v2_router.post(
     "/gacha-simulate/spark",
     tags=["gacha"],
-    summary=doc_list["gacha-simulate"]["summary"],
-    response_description=doc_list["gacha-simulate"]["response_description"],
-    response_model=GachaPullSimulationResponse,
+    summary=doc_list["gacha-simulate-spark"]["summary"],
+    response_description=doc_list["gacha-simulate-spark"]["response_description"],
+    response_model=GachaPullSparkSimulationResponse,
 )
 @limiter.limit("15/minute")
 def simulate_odds_spark(
     request: Request,
-    all_pulls: GachaPullSimulationRequest = Body(
-        example=doc_list["gacha-simulate"]["example"]
+    all_pulls: GachaPullSparkSimulationRequest = Body(
+        example=doc_list["gacha-simulate-spark"]["example"]
     ),
     user=Depends(verify_key),
 ):
@@ -115,14 +120,40 @@ def simulate_odds_spark(
     result = simulate_gacha_spark(
         simulations=all_pulls.simulations,
         pyroxene=all_pulls.pyroxene,
-        rate_up=all_pulls.rate_up,
-        rate_up_3_star=all_pulls.rate_up_3_star,
+        featured_rate=all_pulls.featured_rate,
+        three_star_rate=all_pulls.three_star_rate,
         pity_threshold=all_pulls.pity_threshold,
         spark_threshold=all_pulls.spark_threshold,
     )
 
-    return GachaPullSimulationResponse(**result)
+    return GachaPullSparkSimulationResponse(**result)
 
+##Simulate gacha(pity) endpoint
+@blue_archive_api_v2_router.post(
+    "/gacha-simulate/pity",
+    tags=["gacha"],
+    summary=doc_list["gacha-simulate-pity"]["summary"],
+    response_description=doc_list["gacha-simulate-pity"]["response_description"],
+    response_model=GachaPullPitySimulationResponse,
+)
+@limiter.limit("15/minute")
+def simulate_odds_pity(
+    request: Request,
+    all_pulls: GachaPullPitySimulationRequest = Body(
+        example=doc_list["gacha-simulate-pity"]["example"]
+    ),
+    user=Depends(verify_key),
+):
+
+    result = simulate_gacha_pity(
+        simulations=all_pulls.simulations,
+        pyroxene=all_pulls.pyroxene,
+        featured_rate=all_pulls.featured_rate,
+        three_star_rate=all_pulls.three_star_rate,
+        pity_threshold=all_pulls.pity_threshold,
+    )
+
+    return GachaPullPitySimulationResponse(**result)
 
 ##Calculate pulls needed for a target probability endpoint
 @blue_archive_api_v2_router.post(

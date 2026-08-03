@@ -6,14 +6,14 @@ import pytest
     [
         ({"simulations": 100, "pyroxene": 22000}, 200),
         ({"simulations": 1000, "pyroxene": 22000}, 200),
-        ({"simulations": 1000, "pyroxene": 22000, "rate_up": 0.008}, 200),
+        ({"simulations": 1000, "pyroxene": 22000, "featured_rate": 0.008}, 200),
         ({"simulations": 100}, 422),
         ({"pyroxene": 22000}, 422),
         ({"simulations": 1001, "pyroxene": 22000}, 422),
         ({"simulations": 100, "pyroxene": 119}, 422),
         ({"simulations": -1, "pyroxene": 22000}, 422),
         ({"simulations": 1000, "pyroxene": -1}, 422),
-        ({"simulations": 1000, "pyroxene": 22000, "rate_up": 0}, 422),
+        ({"simulations": 1000, "pyroxene": 22000, "featured_rate": 0}, 422),
     ],
 )
 def test_post_calculate(client, mock_async_api_key, payload, expected_status):
@@ -32,4 +32,4 @@ def test_post_calculate(client, mock_async_api_key, payload, expected_status):
         assert "details" or "detail" in data
 
 
-# Activation: python -m pytest tests/test_simulate.py
+# Activation: python -m pytest tests/test_simulate_spark.py

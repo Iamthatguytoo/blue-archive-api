@@ -60,5 +60,6 @@ jobs:
         run: |
           pytest tests/v2
           pytest tests/test_analyze.py 
-          pytest tests/test_simulate.py 
+          pytest tests/test_simulate_spark.py 
+          pytest tests/test_simulate_pity.py
           pytest tests/test_calculate.py 

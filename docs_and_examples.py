@@ -20,18 +20,29 @@ doc_list = {
         "summary": "Calculate gacha pull probabilities and spark progress based on available pyroxene",
         "example": {"pyroxene": 24000, "rate_up": 0.007},
     },
-    "gacha-simulate": {
+    "gacha-simulate-spark": {
         "response_description": "Returns simulation statistics including success rate, average and median pulls to success, spark occurrences, rate-up acquisition count, off-banner 3-star averages, and overall pull distribution metrics",
         "summary": "Run Monte Carlo simulations to estimate gacha outcomes, spark frequency, and pull statistics",
         "example": {
             "simulations": 100,
             "pyroxene": 24000,
-            "rate_up": 0.007,
-            "rate_up_3_star": 0.03,
+            "featured_rate": 0.007,
+            "three_star_rate": 0.03,
             "pity_threshold": 100,
             "spark_threshold": 200,
         },
     },
+    "gacha-simulate-pity": {
+            "response_description": "Returns simulation statistics including success rate, average and median pulls to success, pity count, rate-up acquisition count, off-banner 3-star averages, rebate system, and overall pull distribution metrics",
+            "summary": "Run Monte Carlo simulations to estimate gacha outcomes, Pity, and pull statistics",
+            "example": {
+                "simulations": 100,
+                "pyroxene": 24000,
+                "featured_rate": 0.007,
+                "three_star_rate": 0.03,
+                "pity_threshold": 100,
+            },
+        },
     "analyze-pulls": {
         "response_description": "Returns the estimated number of pulls, required pyroxene, target confidence level, and associated risk category for obtaining the rate-up unit",
         "summary": "Calculate the pulls and pyroxene required to reach a target probability of obtaining the rate-up unit",

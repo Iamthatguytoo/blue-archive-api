@@ -1,11 +1,11 @@
 from db.database_async import student_collection
 from utils.serialize_students import serialize_student
-from pydantic import BaseModel
+from schemas.v1.schema import StudentFilter
 import re
 
 
 async def fetch_students(
-    filters: BaseModel,
+    filters: StudentFilter,
     name: str | None = None,
     base_name: str | None = None,
     limit: int = 20,
@@ -27,7 +27,16 @@ async def fetch_students(
         else:
             query["base_name"] = {"$regex": re.escape(base_name), "$options": "i"}
 
-    query.update(filters.model_dump(exclude_none=True))
+    if filters.school:
+        query["school"] = {"$regex": f"^{re.escape(filters.school)}$", "$options": "i"}
+
+    if filters.position:
+        query["position"] = {"$regex": f"^{re.escape(filters.position)}$", "$options": "i"}
+
+    if filters.damage_type:
+        query["damage_type"] = {"$regex": f"^{re.escape(filters.damage_type)}$", "$options": "i"}
+
+    query.update(filters.model_dump(exclude_none=True, exclude={"school", "position", "damage_type"}))
 
     total = await student_collection.count_documents(query)
 

@@ -137,7 +137,8 @@ blue_archive_api/
 │   │   └── retrieve_students.py
 │   └── v2/
 │       ├── __init__.py
-│       ├── gacha_simulate_spark.py
+│       ├── gacha_simulate_pity.py
+|       ├── gacha_simulate_spark.py
 │       ├── health_check.py
 │       └── retrieve_students.py
 ├── tests/
@@ -163,7 +164,6 @@ blue_archive_api/
 ├── docs_and_examples.py
 ├── requirements.txt
 ├── .gitignore
-├── .dockerignore
 ├── .replit
 └── README.md
 ```
@@ -392,8 +392,9 @@ print(res.json())
 
 ### Simulate Gacha
 
-Use this when you want realistic pull statistics across many trials.
+As of now there will be two types of this endpoint, the old system(spark) and new system(pity), Use both these when you want realistic pull statistics across many trials.
 
+#### Spark
 ```bash
 curl -X POST "https://blue-archive-api--JohnArchive.replit.app/v2/gacha-simulate/spark" \
 -H "Content-Type: application/json" \
@@ -401,8 +402,8 @@ curl -X POST "https://blue-archive-api--JohnArchive.replit.app/v2/gacha-simulate
 -d '{
   "simulations": 100,
   "pyroxene": 24000,
-  "rate_up": 0.007,
-  "rate_up_3_star": 0.03,
+  "featured_rate": 0.007,
+  "three_star_rate": 0.03,
   "pity_threshold": 100,
   "spark_threshold": 200
 }'
@@ -420,8 +421,8 @@ Invoke-WebRequest `
 -Body '{
   "simulations": 100,
   "pyroxene": 24000,
-  "rate_up": 0.007,
-  "rate_up_3_star": 0.03,
+  "featured_rate": 0.007,
+  "three_star_rate": 0.03,
   "pity_threshold": 100,
   "spark_threshold": 200
 }'
@@ -436,8 +437,8 @@ res = requests.post(
     json={
         "simulations": 100,
         "pyroxene": 24000,
-        "rate_up": 0.007,
-        "rate_up_3_star": 0.03,
+        "featured_rate": 0.007,
+        "three_star_rate": 0.03,
         "pity_threshold": 100,
         "spark_threshold": 200
     }
@@ -453,31 +454,119 @@ print(res.json())
   "simulations_conducted": 100,
   "pulls_per_trial": 200,
   "success_rate": 1,
-  "average_pulls_to_success": 30.3,
-  "median_pulls_to_success": 19.5,
+  "average_pulls_to_success": 104.42,
+  "median_pulls_to_success": 102,
   "successful_runs": 100,
   "zero_success": 0,
-  "trials_reached_spark": 0,
-  "max_pulls": 125,
+  "trials_reached_spark": 25,
+  "max_pulls": 200,
   "min_pulls": 1,
-  "natural_rate_up_obtained": 100,
-  "average_off_banner_3stars": 0.04,
-  "all_one_stars": 2382,
-  "all_two_stars": 544,
-  "all_three_stars": 104,
-  "average_one_stars": 23.82,
-  "average_two_stars": 5.44,
-  "average_three_stars": 1.04,
+  "natural_featured_trials_count": 75,
+  "average_off_banner_3stars": 2.75,
+  "all_one_stars": 8172,
+  "all_two_stars": 1895,
+  "all_three_stars": 375,
+  "average_one_stars": 81.72,
+  "average_two_stars": 18.95,
+  "average_three_stars": 3.75,
   "example_pull_log": [
     "1★",
+    "1★",
+    "1★",
+    "3★",
+    "1★",
+    "1★",
+    "1★",
+    "2★",
+    "1★",
+    "2★"
+  ]
+}
+```
+
+</details>
+
+#### Pity
+```bash
+curl -X POST "https://blue-archive-api--JohnArchive.replit.app/v2/gacha-simulate/pity" \
+-H "Content-Type: application/json" \
+-H "x-api-key: YOUR_API_KEY" \
+-d '{
+  "simulations": 100,
+  "pyroxene": 24000,
+  "featured_rate": 0.007,
+  "three_star_rate": 0.03,
+  "pity_threshold": 100,
+}'
+```
+
+Windows (PowerShell):
+```powershell
+Invoke-WebRequest `
+-Method POST `
+-Uri "https://blue-archive-api--JohnArchive.replit.app/v2/gacha-simulate/pity" `
+-Headers @{
+  "Content-Type" = "application/json"
+  "x-api-key" = "YOUR_API_KEY"
+} `
+-Body '{
+  "simulations": 100,
+  "pyroxene": 24000,
+  "featured_rate": 0.007,
+  "three_star_rate": 0.03,
+  "pity_threshold": 100,
+}'
+```
+
+Python:
+```python
+import requests
+res = requests.post(
+    "https://blue-archive-api--JohnArchive.replit.app/v2/gacha-simulate/pity",
+    headers={"x-api-key": "YOUR_API_KEY"},
+    json={
+        "simulations": 100,
+        "pyroxene": 24000,
+        "featured_rate": 0.007,
+        "three_star_rate": 0.03,
+        "pity_threshold": 100,
+    }
+)
+print(res.json())
+```
+
+<details>
+<summary>Example output</summary>
+
+```json
+{
+  "simulations_conducted": 100,
+  "pulls_per_trial": 240,
+  "success_rate": 1,
+  "average_pulls_to_success": 95.68,
+  "median_pulls_to_success": 98.5,
+  "successful_runs": 100,
+  "zero_success": 0,
+  "max_pulls": 200,
+  "min_pulls": 1,
+  "natural_featured_trials_count": 81,
+  "average_off_banner_3stars": 2.53,
+  "all_one_stars": 7528,
+  "all_two_stars": 1687,
+  "all_three_stars": 353,
+  "average_one_stars": 75.28,
+  "average_two_stars": 16.87,
+  "average_three_stars": 3.53,
+  "example_pull_log": [
+    "1★",
+    "1★",
+    "1★",
     "2★",
     "1★",
     "1★",
     "1★",
     "1★",
     "1★",
-    "1★",
-    "2★",
     "1★"
   ]
 }
@@ -588,17 +677,18 @@ print(res.json())
   | `chance_need_spark` | float | % chance you'll need to spark to guarantee the rate-up |
 
 ### Gacha Simulation
-- `POST /v2/gacha-simulate/spark` — Run Monte Carlo gacha simulations (up to 1,000 trials)
+- `POST /v2/gacha-simulate/spark` — Simulate banners with a spark guarantee system
+- `POST /v2/gacha-simulate/pity` — Simulate banners with a pity-based guarantee system
   - Input: 
 
   | Field | Type | Description |
   |-----------|------|-------------|
   | `simulations` | int | Number of trial runs (1–1,000) |
   | `pyroxene` | int | Amount of Pyroxene per trial (120 = 1 pull) |
-  | `rate_up` | float | Rate-up student probability (e.g. 0.007) |
-  | `rate_up_3_star` | float | Overall 3★ rate (e.g. 0.03 for 3%) |
+  | `featured_rate` | float | Rate-up student probability (e.g. 0.007) |
+  | `three_star_rate` | float | Overall 3★ rate (e.g. 0.03 for 3%) |
   | `pity_threshold` | int | Pulls before a guaranteed 3★ (typically 100) |
-  | `spark_threshold` | int | Pulls before a guaranteed rate-up (typically 200) |
+  | `spark_threshold(spark system)` | int | Pulls before a guaranteed rate-up (typically 200) |
   
   - Output:
 
@@ -611,14 +701,14 @@ print(res.json())
   | `median_pulls_to_success` | float | Median pulls needed across successful trials |
   | `successful_runs` | int | Trials where the rate-up was obtained |
   | `zero_success` | int | Trials where the rate-up was never obtained |
-  | `trials_reached_spark` | int | Trials the required sparking |
+  | `trials_reached_spark` | int | (Spark system only) Trials that required the guaranteed rate-up spark |
   | `max_pulls` | int | Most amount of pulls used in a single trial |
   | `min_pulls` | int | Least amount of pulls used in a single trial |
-  | `rate_up_obtained` | int | Total rate-up students obtained across all trials |
+  | `natural_featured_trials_count` | int | Number of trials where the featured student was obtained before the final guarantee |
   | `average_off_banner_3stars` | float | Average number of non-rate-up 3★ students obtained per simulation |
   | `all_one/two/three_stars` | int | Total number of 1★, 2★, and 3★ students obtained across all simulations |
   | `average_one/two/three_stars` | float | Average number of 1★, 2★, and 3★ students obtained per simulation |
-  | `example_pull_log` | list[str] | Example pull results from the first simulation trial, grouped by 10-pull batches |
+  | `example_pull_log` | list[str] | Example results from the first 10-pull batch of the first simulation trial |
 
 ### Pull Analysis
 - `POST /v2/analyze-pulls` — Reverse probability: find pulls needed for a target confidence
