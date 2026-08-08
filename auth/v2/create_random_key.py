@@ -1,6 +1,7 @@
 from db.database_async import api_key_collection
 from datetime import datetime, timezone
 import secrets
+import hashlib
 
 
 async def generate_key(tier="free"):
@@ -11,14 +12,15 @@ async def generate_key(tier="free"):
     rate = limits[tier]["daily_limit"]
 
     while True:
-        api_key = "sk_" + secrets.token_hex(16)
-        if not await api_key_collection.find_one({"api_key": api_key}):
+        raw_api_key = "sk_" + secrets.token_hex(16)
+        hashed_api_key = hashlib.sha256(raw_api_key.encode('utf-8')).hexdigest()
+        if not await api_key_collection.find_one({"hashed_api_key": hashed_api_key}):
             break
 
     today = datetime.now(timezone.utc).date().isoformat()
 
     data = {
-        "api_key": api_key,
+        "hashed_api_key": hashed_api_key,
         "daily_limit": rate,
         "tier": tier,
         "requests_today": 0,
@@ -29,7 +31,7 @@ async def generate_key(tier="free"):
     await api_key_collection.insert_one(data)
 
     return {
-        "api_key": data["api_key"],
+        "api_key": raw_api_key,
         "daily_limit": data["daily_limit"],
         "tier": data["tier"],
         "resetted_at": today,

@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     API_COLLECTION_SCRAPER: str
 
     class Config:
-        env_file = ".env.local"
+        env_file = ".env.prod"
 
 
 settings = Settings()

@@ -3,15 +3,15 @@ from schemas.v1.schema import (
     StudentFilter,
     CalcRequest,
     CalcResponse,
-    GachaPullSparkSimulationRequest,
     PaginatedResponseModel,
     AnalyzePullsRequest,
     AnalyzePullsResponse,
 )
 from schemas.v2.schema import (
+    GachaPullSparkSimulationRequest,
     GachaPullSparkSimulationResponse,
     GachaPullPitySimulationRequest,
-    GachaPullPitySimulationResponse
+    GachaPullPitySimulationResponse,
     )
 from auth.v2.key_verification import verify_key
 from auth.v2.create_random_key import generate_key
@@ -122,6 +122,7 @@ def simulate_odds_spark(
         pyroxene=all_pulls.pyroxene,
         featured_rate=all_pulls.featured_rate,
         three_star_rate=all_pulls.three_star_rate,
+        continue_after_featured=all_pulls.continue_after_featured,
         pity_threshold=all_pulls.pity_threshold,
         spark_threshold=all_pulls.spark_threshold,
     )
@@ -149,6 +150,7 @@ def simulate_odds_pity(
         simulations=all_pulls.simulations,
         pyroxene=all_pulls.pyroxene,
         featured_rate=all_pulls.featured_rate,
+        continue_after_featured=all_pulls.continue_after_featured,
         three_star_rate=all_pulls.three_star_rate,
         pity_threshold=all_pulls.pity_threshold,
     )

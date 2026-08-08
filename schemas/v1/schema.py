@@ -60,8 +60,8 @@ class CalcResponse(BaseModel):
 class GachaPullSparkSimulationRequest(BaseModel):
     simulations: int = Field(..., gt=0, le=1000)
     pyroxene: int = Field(..., ge=120)
-    featured_rate: float = Field(0.007, gt=0, lt=1)
-    three_star_rate: float = Field(0.03, gt=0, lt=1)
+    rate_up: float = Field(0.007, gt=0, lt=1)
+    rate_up_3_star: float = Field(0.03, gt=0, lt=1)
     pity_threshold: int = Field(100, gt=0)
     spark_threshold: int = Field(200, gt=0)
 
@@ -70,8 +70,8 @@ class GachaPullSparkSimulationRequest(BaseModel):
         if self.pity_threshold >= self.spark_threshold:
             raise ValueError("pity_threshold must be less than spark_threshold")
 
-        if self.featured_rate > self.three_star_rate:
-            raise ValueError("featured_rate cannot be greater than three_star_rate")
+        if self.rate_up > self.rate_up_3_star:
+            raise ValueError("rate_up cannot be greater than rate_up_3_star")
 
         return self
 

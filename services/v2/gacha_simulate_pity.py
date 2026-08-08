@@ -7,10 +7,12 @@ def simulate_gacha_pity(
     pyroxene: int,
     featured_rate: float,
     three_star_rate: float,
+    continue_after_featured: bool,
     pity_threshold: int,
 ):
     total_pulls = []
     total_natural_featured_results = []
+    total_featured_pull_counts = []
     total_off_banner_3_stars = []
     total_successes = []
     total_one_stars = []
@@ -40,6 +42,7 @@ def simulate_gacha_pity(
         pull_log = []
         one_stars = 0
         two_stars = 0
+        featured_pull = None
         three_stars = 0
 
         for start in range(0, available_pulls, 10):
@@ -72,15 +75,24 @@ def simulate_gacha_pity(
 
                 batch_log.append(f"{result['rarity']}★")
 
-                if result["success"]:
-                    success = True
-                    natural_featured = result["natural_featured"]
-                    break
+                if result["featured"]:
+                    if not success:
+                        success = True
+                        featured_pull = pull_count
+
+                        if result["natural_featured"]:
+                            natural_featured = True
+
+                    if not continue_after_featured:
+                        break
 
             pull_log.append(batch_log)
 
-            if success:
+            if not continue_after_featured and success:
                 break
+
+        if featured_pull is not None:
+            total_featured_pull_counts.append(featured_pull)
 
         if sim == 0:
             example_pull_log = pull_log[0]
@@ -93,22 +105,21 @@ def simulate_gacha_pity(
         total_two_stars.append(two_stars)
         total_three_stars.append(three_stars)
 
-    max_pulls = max(total_pulls)
-    min_pulls = min(total_pulls)
+    max_pulls = max(total_featured_pull_counts)
+    min_pulls = min(total_featured_pull_counts)
 
     success_trials = sum(total_successes) / simulations
     successful_runs = total_successes.count(True)
     zero_success = total_successes.count(False)
-    successful_pull_counts = [
-        pulls for pulls, success in zip(total_pulls, total_successes) if success
-    ]
     average_pulls_to_success = (
-        sum(successful_pull_counts) / len(successful_pull_counts)
-        if successful_pull_counts
+        sum(total_featured_pull_counts) / len(total_featured_pull_counts)
+        if total_featured_pull_counts
         else None
     )
     median_pulls_to_success = (
-        statistics.median(successful_pull_counts) if successful_pull_counts else None
+        statistics.median(total_featured_pull_counts)
+        if total_featured_pull_counts
+        else None
     )
     natural_featured_count = total_natural_featured_results.count(True)
     average_off_banner_3stars = round(sum(total_off_banner_3_stars) / simulations, 2)

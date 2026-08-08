@@ -3,6 +3,9 @@ from db.settings import settings
 from pymongo.errors import PyMongoError
 from fastapi import HTTPException
 from datetime import datetime, UTC
+from time import time
+
+START = time()
 
 
 async def create_health_check():
@@ -10,8 +13,12 @@ async def create_health_check():
     try:
         await client.admin.command("ping")
 
+        uptime = int(time() - START)
+
         return {
             "status": "healthy",
+            "version": "2.1.0",
+            "uptime": uptime,
             "connection_checks": {
                 "mongodb": True,
             },
@@ -24,6 +31,7 @@ async def create_health_check():
             status_code=503,
             detail={
                 "status": "unhealthy",
+                "version": "2.1.0",
                 "connection_checks": {
                     "mongodb": False,
                 },
