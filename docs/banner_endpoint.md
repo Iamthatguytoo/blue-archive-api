@@ -59,7 +59,7 @@ print(res.json())
 
   | Parameter | Type | Description |
   |-----------|------|-------------|
-  | `banners` | list[SingleBannerModel] | List of all current banners |
+  | `banners` | list[SingleBannerResponse] | List of all current banners |
   | `name` | str | Student featured in the banner |
   | `start_date` | datetime | Day and time the banner starts |
   | `end_date` | datetime | Day and time the banner ends |
