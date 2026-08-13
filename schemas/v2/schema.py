@@ -85,11 +85,11 @@ class GachaPullSparkSimulationResponse(BaseModel):
 
 
 # region BANNER RESPONSE
-class BannerResponse(BaseModel):
-    banners: list[SingleBannerResponse]
-
 class SingleBannerResponse(BaseModel):
     name: str
     start_date: datetime
     end_date: datetime
+
+class BannerResponse(BaseModel):
+    banners: list[SingleBannerResponse]
 # endregion 
