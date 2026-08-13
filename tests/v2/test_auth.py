@@ -10,7 +10,7 @@ def test_missing_api_key(client):
     res = client.get("/v2/students")
 
     assert res.status_code == 403
-    assert res.json()["detail"] == "API key required"
+    assert res.json()["details"] == "API key required"
 
 
 @pytest.mark.anyio
@@ -87,4 +87,4 @@ def test_rate_limit_exceeded(client, monkeypatch):
     res = client.get("/v2/students", headers={"x-api-key": "test-key"})
 
     assert res.status_code == 429
-    assert "Daily limit exceeded" in res.json()["detail"]
+    assert "Daily limit exceeded" in res.json()["details"]

@@ -12,6 +12,7 @@ from schemas.v2.schema import (
     GachaPullSparkSimulationResponse,
     GachaPullPitySimulationRequest,
     GachaPullPitySimulationResponse,
+    BannerResponse,
     )
 from auth.v2.key_verification import verify_key
 from auth.v2.create_random_key import generate_key
@@ -20,6 +21,7 @@ from services.v2.retrieve_students import fetch_students
 from services.v1.gacha_calculate import calculate_gacha
 from services.v2.gacha_simulate_spark import simulate_gacha_spark
 from services.v2.gacha_simulate_pity import simulate_gacha_pity
+from services.v2.retrieve_banners import get_current_banners
 from services.v1.analyze_pulls import pull_target
 from services.v1.cache_requests import set_cache, get_cache
 from docs_and_examples import doc_list
@@ -80,6 +82,19 @@ async def get_students(
 
     return PaginatedResponseModel(**result)
 
+@blue_archive_api_v2_router.get(
+    "/banners",
+    tags=["banners"],
+    summary=doc_list["banner"]["summary"],
+    response_description=doc_list["banner"]["response_description"],
+    response_model=BannerResponse
+)
+@limiter.limit("60/minute")
+async def get_all_current_banners(
+    request: Request,
+    user=Depends(verify_key)
+):
+    return await get_current_banners()
 
 ##Calculate gacha pulls endpoint
 @blue_archive_api_v2_router.post(

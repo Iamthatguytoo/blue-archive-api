@@ -6,11 +6,15 @@ A Fan-Made FastAPI-based API for querying Blue Archive students (characters) dat
 
 ## API Status
 
-```
-API link: https://blue-archive-api--JohnArchive.replit.app
+
+API link: [https://blue-archive-api--JohnArchive.replit.app](https://blue-archive-api--JohnArchive.replit.app)
+
+Docs link: [Swagger UI](https://blue-archive-api--JohnArchive.replit.app/docs)
+
+ReDoc link: [ReDoc](https://blue-archive-api--JohnArchive.replit.app/redoc)
+
 Server status: online 🟢
-Interactive docs: /docs  or  /redoc
-```
+
 
 ---
 
@@ -39,20 +43,6 @@ curl -H "x-api-key: YOUR_KEY" \
 "https://blue-archive-api--JohnArchive.replit.app/v2/students?name=Hina"
 ```
 
----
-
-## Gacha Terms
-
-| Term | Meaning |
-|------|---------|
-| **Pyroxene** | Blue Archive's premium currency. **120 Pyroxene = 1 pull** |
-| **Featured Rate** | The probability that a pull results in the featured student (typically 0.7%) |
-| **3★ Pity** | Guarantees a 3★ after a configurable number of pulls without obtaining one |
-| **Banner Pity** | In `/v2/gacha-simulate/pity`, after 100 banner pulls without obtaining the featured student, the next guaranteed 3★ has a 50% chance of being the featured student |
-| **Spark** | In `/v2/gacha-simulate/spark`, guarantees the featured student after reaching the configured spark threshold (typically 200 pulls) |
-
----
-
 ## Features
 
 - Retrieve student data from MongoDB with filtering and pagination (server-side cached for fast repeated queries).
@@ -70,22 +60,11 @@ Each endpoint has a per-IP rate limit:
 ```
 /v2/auth/register                        → 2/hour
 /v2/students                             → 60/minute
+/v2/banners                              → 60/minute
 /v2/gacha-calculate                      → 15/minute
 /v2/gacha-simulate/spark                 → 15/minute
 /v2/gacha-simulate/pity                  → 15/minute
 /v2/analyze-pulls                        → 30/minute
-```
-
----
-
-## Probability Format
-
-All probability values use decimal format:
-
-```
-0.007 = 0.7%
-0.03  = 3%
-0.8   = 80%
 ```
 
 ---
@@ -115,7 +94,6 @@ blue_archive_api/
 │       └── key_verification.py
 ├── db/
 │   ├── __init__.py
-│   ├── blue_archive_characters.py
 │   ├── database.py
 │   ├── database_async.py
 │   └── settings.py
@@ -144,13 +122,22 @@ blue_archive_api/
 │       ├── gacha_simulate_pity.py
 |       ├── gacha_simulate_spark.py
 │       ├── health_check.py
+│       ├── retrieve_banners.py
 │       └── retrieve_students.py
+├── docs/
+│   ├── analyze_pulls_endpoint.md
+│   ├── banner_endpoint.md
+│   ├── gacha_calculate_endpoint.md
+│   ├── gacha_simulation_endpoints.md
+│   ├── general_endpoints.md
+│   └── students_endpoint.md
+│ 
 ├── tests/
 │   ├── __init__.py
 │   ├── conftest.py
 │   ├── test_analyze.py
 │   ├── test_calculate.py
-│   └── test_simulate.py
+│   ├── test_simulate.py
 │   ├── v1/
 │   │   ├── __init__.py
 │   │   ├── test_auth.py
@@ -159,11 +146,15 @@ blue_archive_api/
 │   └── v2/
 │       ├── __init__.py
 │       ├── test_auth.py
+│       ├── test_banner.py
 │       ├── test_health.py
 │       └── test_student.py
 ├── utils/
 │   ├── gacha_pulls.py
-│   └── serialize_students.py
+│   └── serializers.py
+├── workers/
+|   ├── banner_scraper.py
+|   └── blue_archive_characters.py
 ├── blue_archive_characters_api.py
 ├── docs_and_examples.py
 ├── requirements.txt
@@ -173,581 +164,23 @@ blue_archive_api/
 ```
 
 ---
-
-## API Requests
-
-### Register an API key
-
-```bash
-curl -X POST https://blue-archive-api--JohnArchive.replit.app/v2/auth/register
-```
-
-Windows (PowerShell):
-```powershell
-Invoke-RestMethod -Method POST -Uri "https://blue-archive-api--JohnArchive.replit.app/v2/auth/register"
-```
-
-Python:
-```python
-import requests
-res = requests.post("https://blue-archive-api--JohnArchive.replit.app/v2/auth/register")
-print(res.json())
-```
-
-<details>
-<summary>Example output</summary>
-
-```json
-{
-  "api_key": "sk_********************************",
-  "daily_limit": 1000,
-  "tier": "free",
-  "resetted_at": "2026-XX-XX",
-  "message": "Copy this string now. You wont see it again"
-}
-```
-
-</details>
-
+## Tech Stack
+- **Python**: Main Programming Language
+- **FastAPI**: Framework for the API
+- **MongoDB**: Main database
+- **Pytest**: For testing the functions and response codes
+- **GitHub Actions**: CI and scheduled workflows
+- **Replit**: Main deployment platform
 ---
 
-### Query students
+## API Endpoints Information
 
-```bash
-curl -H "x-api-key: YOUR_KEY" \
-"https://blue-archive-api--JohnArchive.replit.app/v2/students?name=Hina"
-```
-
-Windows (PowerShell):
-```powershell
-Invoke-WebRequest `
-  -Uri "https://blue-archive-api--JohnArchive.replit.app/v2/students?name=Hina" `
-  -Headers @{ "x-api-key" = "YOUR_API_KEY" }
-```
-
-Python:
-```python
-import requests
-res = requests.get(
-    "https://blue-archive-api--JohnArchive.replit.app/v2/students",
-    headers={"x-api-key": "YOUR_API_KEY"},
-    params={"name": "Hina"}
-)
-print(res.json())
-```
-
-<details>
-<summary>Example output</summary>
-
-```json
-{
-  "total": 1,
-  "skip": 0,
-  "limit": 20,
-  "students": [
-    {
-      "name": "Hina",
-      "base_name": "Hina",
-      "rarity": "3",
-      "variant": "none",
-      "damage_type": "explosive",
-      "armor_type": "heavy",
-      "class_name": "striker",
-      "school": "gehenna",
-      "position": "back",
-      "weapon": "mg",
-      "pool": "archive",
-      "terrain": {
-        "urban_terrain": "S",
-        "outdoor_terrain": "C",
-        "indoor_terrain": "C"
-      }
-    }
-  ]
-}
-```
-
-</details>
-
----
-
-#### Filtering students
-You can also filter the results or combine any query parameters in a single request.
-This example fetches back-row Mystic students from Millennium, skips the first two results, and returns one student.:
-
-```bash
-curl -H "x-api-key: YOUR_API_KEY" \
-"https://blue-archive-api--JohnArchive.replit.app/v2/students?school=millennium&damage_type=mystic&position=back&skip=2&limit=1"
-```
-Windows (PowerShell):
-```powershell
-Invoke-WebRequest `
-  -Uri "https://blue-archive-api--JohnArchive.replit.app/v2/students?school=millennium&damage_type=mystic&position=back&skip=2&limit=1" `
-  -Headers @{ "x-api-key" = "YOUR_API_KEY" }
-```
-Python:
-```python
-import requests
-res = requests.get(
-    "https://blue-archive-api--JohnArchive.replit.app/v2/students",
-    headers={"x-api-key": "YOUR_API_KEY"},
-    params={
-        "school": "millennium",
-        "damage_type": "mystic",
-        "position": "back",
-        "skip": 2,
-        "limit": 1
-    }
-)
-print(res.json())
-```
-
-<details>
-<summary>Example output</summary>
-
-```json
-{
-  "total": 10,
-  "skip": 2,
-  "limit": 1,
-  "students": [
-    {
-      "name": "Kei",
-      "base_name": "Kei",
-      "rarity": "3",
-      "variant": "none",
-      "damage_type": "mystic",
-      "armor_type": "composite",
-      "class_name": "striker",
-      "school": "millennium",
-      "position": "back",
-      "weapon": "rg",
-      "pool": "anniversary",
-      "terrain": {
-        "urban_terrain": "S",
-        "outdoor_terrain": "D",
-        "indoor_terrain": "A"
-      }
-    }
-  ]
-}
-```
-
-</details>
-
----
-
-### Calculate Pulls
-
-Use this when you want to know: "I have X Pyroxenes — what are my chances?"
-
-```bash
-curl -X POST "https://blue-archive-api--JohnArchive.replit.app/v2/gacha-calculate" \
--H "Content-Type: application/json" \
--H "x-api-key: YOUR_API_KEY" \
--d '{
-  "pyroxene": 24000,
-  "rate_up": 0.007
-}'
-```
-
-Windows (PowerShell):
-```powershell
-Invoke-WebRequest `
--Method POST `
--Uri "https://blue-archive-api--JohnArchive.replit.app/v2/gacha-calculate" `
--Headers @{
-  "Content-Type" = "application/json"
-  "x-api-key" = "YOUR_API_KEY"
-} `
--Body '{
-  "pyroxene": 24000,
-  "rate_up": 0.007
-}'
-```
-
-Python:
-```python
-import requests
-res = requests.post(
-    "https://blue-archive-api--JohnArchive.replit.app/v2/gacha-calculate",
-    headers={"x-api-key": "YOUR_API_KEY"},
-    json={"pyroxene": 24000, "rate_up": 0.007}
-)
-print(res.json())
-```
-
-<details>
-<summary>Example output</summary>
-
-```json
-{
-  "pulls": 200,
-  "spark_reachable": true,
-  "pulls_to_spark": 0,
-  "chance_get_rate_up_naturally": 75.461405,
-  "chance_need_spark": 24.538595
-}
-```
-
-</details>
-
----
-
-### Simulate Gacha
-
-As of now there will be two types of this endpoint, the old system(spark) and new system(pity), Use both of these when you want realistic pull statistics across many trials.
-
-#### Spark
-```bash
-curl -X POST "https://blue-archive-api--JohnArchive.replit.app/v2/gacha-simulate/spark" \
--H "Content-Type: application/json" \
--H "x-api-key: YOUR_API_KEY" \
--d '{
-  "simulations": 100,
-  "pyroxene": 24000,
-  "featured_rate": 0.007,
-  "continue_after_featured": true,
-  "three_star_rate": 0.03,
-  "pity_threshold": 100,
-  "spark_threshold": 200
-}'
-```
-
-Windows (PowerShell):
-```powershell
-Invoke-WebRequest `
--Method POST `
--Uri "https://blue-archive-api--JohnArchive.replit.app/v2/gacha-simulate/spark" `
--Headers @{
-  "Content-Type" = "application/json"
-  "x-api-key" = "YOUR_API_KEY"
-} `
--Body '{
-  "simulations": 100,
-  "pyroxene": 24000,
-  "featured_rate": 0.007,
-  "continue_after_featured": true,
-  "three_star_rate": 0.03,
-  "pity_threshold": 100,
-  "spark_threshold": 200
-}'
-```
-
-Python:
-```python
-import requests
-res = requests.post(
-    "https://blue-archive-api--JohnArchive.replit.app/v2/gacha-simulate/spark",
-    headers={"x-api-key": "YOUR_API_KEY"},
-    json={
-        "simulations": 100,
-        "pyroxene": 24000,
-        "featured_rate": 0.007,
-        "continue_after_featured": True,
-        "three_star_rate": 0.03,
-        "pity_threshold": 100,
-        "spark_threshold": 200
-    }
-)
-print(res.json())
-```
-
-<details>
-<summary>Example output</summary>
-
-```json
-{
-  "simulations_conducted": 100,
-  "pulls_per_trial": 200,
-  "success_rate": 1,
-  "average_pulls_to_success": 104.71,
-  "median_pulls_to_success": 102,
-  "successful_runs": 100,
-  "zero_success": 0,
-  "trials_reached_spark": 100,
-  "spark_rate": 1,
-  "max_pulls": 200,
-  "min_pulls": 2,
-  "natural_featured_trials_count": 77,
-  "sparked_featured_trials_count": 23,
-  "total_featured_obtained": 100,
-  "average_off_banner_3stars": 4.49,
-  "all_one_stars": 15723,
-  "all_two_stars": 3667,
-  "all_three_stars": 610,
-  "average_one_stars": 157.23,
-  "average_two_stars": 36.67,
-  "average_three_stars": 6.1,
-  "example_pull_log": [
-    "1★",
-    "3★",
-    "1★",
-    "1★",
-    "1★",
-    "1★",
-    "1★",
-    "1★",
-    "2★",
-    "1★"
-  ]
-}
-```
-
-</details>
-
-#### Pity
-```bash
-curl -X POST "https://blue-archive-api--JohnArchive.replit.app/v2/gacha-simulate/pity" \
--H "Content-Type: application/json" \
--H "x-api-key: YOUR_API_KEY" \
--d '{
-  "simulations": 100,
-  "pyroxene": 24000,
-  "featured_rate": 0.007,
-  "continue_after_featured": true,
-  "three_star_rate": 0.03,
-  "pity_threshold": 100
-}'
-```
-
-Windows (PowerShell):
-```powershell
-Invoke-WebRequest `
--Method POST `
--Uri "https://blue-archive-api--JohnArchive.replit.app/v2/gacha-simulate/pity" `
--Headers @{
-  "Content-Type" = "application/json"
-  "x-api-key" = "YOUR_API_KEY"
-} `
--Body '{
-  "simulations": 100,
-  "pyroxene": 24000,
-  "featured_rate": 0.007,
-  "continue_after_featured": true,
-  "three_star_rate": 0.03,
-  "pity_threshold": 100
-}'
-```
-
-Python:
-```python
-import requests
-res = requests.post(
-    "https://blue-archive-api--JohnArchive.replit.app/v2/gacha-simulate/pity",
-    headers={"x-api-key": "YOUR_API_KEY"},
-    json={
-        "simulations": 100,
-        "pyroxene": 24000,
-        "featured_rate": 0.007,
-        "continue_after_featured": True,
-        "three_star_rate": 0.03,
-        "pity_threshold": 100
-    }
-)
-print(res.json())
-```
-
-<details>
-<summary>Example output</summary>
-
-```json
-{
-  "simulations_conducted": 100,
-  "pulls_per_trial": 240,
-  "success_rate": 1,
-  "average_pulls_to_success": 91.94,
-  "median_pulls_to_success": 100,
-  "successful_runs": 100,
-  "zero_success": 0,
-  "max_pulls": 200,
-  "min_pulls": 1,
-  "natural_featured_trials_count": 89,
-  "average_off_banner_3stars": 5.78,
-  "all_one_stars": 18843,
-  "all_two_stars": 4339,
-  "all_three_stars": 818,
-  "average_one_stars": 188.43,
-  "average_two_stars": 43.39,
-  "average_three_stars": 8.18,
-  "example_pull_log": [
-    "1★",
-    "1★",
-    "1★",
-    "1★",
-    "1★",
-    "2★",
-    "1★",
-    "1★",
-    "1★",
-    "1★"
-  ]
-}
-```
-
-</details>
-
----
-
-### Analyze Pulls
-
-Use this when you want to know: "How many Pyroxenes do I need for an 80% chance?"
-
-```bash
-curl -X POST "https://blue-archive-api--JohnArchive.replit.app/v2/analyze-pulls" \
--H "Content-Type: application/json" \
--H "x-api-key: YOUR_API_KEY" \
--d '{
-  "probability": 0.8,
-  "rate_up": 0.007
-}'
-```
-
-Windows (PowerShell):
-```powershell
-Invoke-WebRequest `
--Method POST `
--Uri "https://blue-archive-api--JohnArchive.replit.app/v2/analyze-pulls" `
--Headers @{
-  "Content-Type" = "application/json"
-  "x-api-key" = "YOUR_API_KEY"
-} `
--Body '{
-  "probability": 0.8,
-  "rate_up": 0.007
-}'
-```
-
-Python:
-```python
-import requests
-res = requests.post(
-    "https://blue-archive-api--JohnArchive.replit.app/v2/analyze-pulls",
-    headers={"x-api-key": "YOUR_API_KEY"},
-    json={"probability": 0.8, "rate_up": 0.007}
-)
-print(res.json())
-```
-
-<details>
-<summary>Example output</summary>
-
-```json
-{
-  "required_pulls": 230,
-  "pyroxene_needed": 27600,
-  "confidence": 0.8,
-  "risk_level": "moderate"
-}
-```
-
-</details>
-
----
-
-## API Endpoints Reference
-
-### General
-- `GET /` — Landing page with API status and documentation links.
-- `GET /health` — Health check, returns server status (useful for uptime monitoring).
-
-### Authentication
-- `POST /v2/auth/register` — Generate a new API key (returns `sk_*` key to user(shown only once) and adds the hashed version to the database).
-
-### Student Data
-- `GET /v2/students` — Retrieve paginated student data with filtering.
-
-  | Parameter | Type | Description |
-  |-----------|------|-------------|
-  | `name` | string | Exact match, case-insensitive (e.g. `Arisu (Armed)`) |
-  | `base_name` | string | Exact match with partial fallback (e.g. `Arisu` returns all Arisu variants) |
-  | `school` | string | Filter by school (e.g. `gehenna`, `trinity`, `millennium`). |
-  | `position` | string | Filter by position (`front`, `middle`, `back`) |
-  | `damage_type` | string | Filter by damage type (`explosive`, `penetration`, `mystic`, `sonic`) |
-  | `armor_type` | string | Filter by armor type (`light`, `heavy`, `special`, `elastic`) |
-  | `weapon` | string | Filter by weapon type (e.g. `sr`, `smg`, `mg`, `ar`) |
-  | `pool` | string | Filter by banner pool (e.g. `archive`, `anniversary`) |
-  | `limit` | int | Results per page (default: 20) |
-  | `skip` | int | Results to skip for pagination (default: 0) |
-
-### Gacha Calculations
-- `POST /v2/gacha-calculate` — Calculate pull odds from Pyroxenes
-  - Input:
-    
-  | Field | Type | Description |
-  |-----------|------|-------------|
-  | `pyroxene` | int | Amount of Pyroxene you have (120 = 1 pull) |
-  | `rate_up` | float | Rate-up student probability (e.g. 0.007 for 0.7%) |
-  
-  - Output:
-
-  | Field | Type | Description |
-  |-----------|------|-------------|
-  | `pulls` | int | Total pulls from your Pyroxenes |
-  | `spark_reachable` | bool | Whether you have enough pulls to spark |
-  | `pulls_to_spark` | int | Extra pulls still needed to reach spark (0 if already reachable) |
-  | `chance_get_rate_up_naturally` | int | % chance of getting rate-up before sparking |
-  | `chance_need_spark` | float | % chance you'll need to spark to guarantee the rate-up |
-
-### Gacha Simulation
-- `POST /v2/gacha-simulate/spark` — Simulate banners with a spark guarantee system
-- `POST /v2/gacha-simulate/pity` — Simulate banners with a pity-based guarantee system
-  - Input: 
-
-  | Field | Type | Description |
-  |-----------|------|-------------|
-  | `simulations` | int | Number of trial runs (1–1,000) |
-  | `pyroxene` | int | Amount of Pyroxene per trial (120 = 1 pull) |
-  | `featured_rate` | float | Rate-up student probability (e.g. 0.007) |
-  | `continue_after_featured` | bool | Conditional about continuing to pull after featured |
-  | `three_star_rate` | float | Overall 3★ rate (e.g. 0.03 for 3%) |
-  | `pity_threshold` | int | Pulls before a guaranteed 3★ (typically 100) |
-  | `spark_threshold` | int | (`/v2/gacha-simulate/spark`)Pulls before a guaranteed rate-up (typically 200) |
-  
-  - Output:
-
-  | Field | Type | Description |
-  |-----------|------|-------------|
-  | `simulations_conducted` | int | Number of simulations that ran |
-  | `pulls_per_trial` | int | Pulls available per trial |
-  | `success_rate` | float | Ratio of trials that got the rate-up student |
-  | `average_pulls_to_success` | float | Average pulls needed across successful trials |
-  | `median_pulls_to_success` | float | Median pulls needed across successful trials |
-  | `successful_runs` | int | Trials where the rate-up was obtained |
-  | `zero_success` | int | Trials where the rate-up was never obtained |
-  | `trials_reached_spark` | int | (Spark system only) Trials that required the guaranteed rate-up spark |
-  | `spark_rate` | float | (Spark system only) Percentage of trials that needed to spark |
-  | `max_pulls` | int | Most amount of pulls used in a single trial |
-  | `min_pulls` | int | Least amount of pulls used in a single trial |
-  | `natural_featured_trials_count` | int | Number of trials where the featured student was obtained before the final guarantee |
-  | `average_off_banner_3stars` | float | Average number of non-rate-up 3★ students obtained per simulation |
-  | `all_one/two/three_stars` | int | Total number of 1★, 2★, and 3★ students obtained across all simulations |
-  | `average_one/two/three_stars` | float | Average number of 1★, 2★, and 3★ students obtained per simulation |
-  | `example_pull_log` | list[str] | Example results from the first 10-pull batch of the first simulation trial |
-
-### Pull Analysis
-- `POST /v2/analyze-pulls` — Reverse probability: find pulls needed for a target confidence
-  - Input: 
-
-  | Field | Type | Description |
-  |-----------|------|-------------|
-  | `probability` | float | Your target confidence level (e.g. 0.8 for 80%) |
-  | `rate_up` | float | Rate-up student probability (e.g. 0.007 for 0.7%) |
-  
-  - Output:
-  
-  | Field | Type | Description |
-  |-----------|------|-------------|
-  | `required_pulls` | int | Pulls needed to reach your target confidence |
-  | `pyroxene_needed` | int | Pyroxenes needed (required_pulls × 120) |
-  | `confidence` | float | The confidence level you requested |
-  | `risk_level` | string | Assessment of the cost: low(>=0.9 or 90%), moderate(>=0.7 or 70%), or high(<70%) |
-
-### Interactive Docs
-- `/docs` — Swagger UI (try endpoints directly in the browser)
-- `/redoc` — ReDoc (clean reference documentation)
-
----
+- [General Endpoints](docs/general_endpoints.md)
+- [Student Endpoint](docs/students_endpoint.md)
+- [Gacha Calculation Endpoint](docs/gacha_calculate_endpoint.md)
+- [Gacha Simulation Endpoints](docs/gacha_simulation_endpoints.md)
+- [Analyze Pulls Endpoints](docs/analyze_pulls_endpoint.md)
+- [Banner Endpoint](docs/banner_endpoint.md)
 
 ## Notes
 

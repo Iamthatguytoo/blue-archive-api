@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
-from fastapi.exceptions import RequestValidationError
+from fastapi.exceptions import RequestValidationError, HTTPException
 from fastapi.encoders import jsonable_encoder
 import uvicorn as uv
 from middleware.v1.rate_limit import setup_ip_rate_limiting
@@ -19,7 +19,7 @@ server = FastAPI(
         "name": "Iamthatguytoo",
         "url": "https://github.com/Iamthatguytoo",
     },
-    version="2.1.0",
+    version="2.2.0",
     openapi_tags=tags_metadata,
 )
 
@@ -31,7 +31,7 @@ logging.basicConfig(
 logger = logging.getLogger("blue-archive-api")
 
 
-## Global Exception Handler
+## Global Internal Server Error Handler
 @server.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     logger.exception("Unhandled error")
@@ -41,6 +41,24 @@ async def global_exception_handler(request: Request, exc: Exception):
         content={"status": "error", "message": "Internal server error"},
     )
 
+## Global HTTPException Handler
+@server.exception_handler(HTTPException)
+async def global_exception_handler(request: Request, exc: HTTPException):
+    logger.exception(
+        "HTTP error: %s %s - %s",
+        exc.status_code,
+        request.url.path,
+        exc.detail,
+        )
+
+    return JSONResponse(
+        status_code=exc.status_code,
+        content=jsonable_encoder({
+        "status": exc.status_code, 
+        "message": "HTTP Error",
+        "details": exc.detail,
+        }),
+    )
 
 # Global ValidationError Handler
 @server.exception_handler(RequestValidationError)
@@ -87,7 +105,7 @@ def show_api_working():
         "status": "running",
         "docs": "/docs",
         "redoc": "/redoc",
-        "version": "2.1.0",
+        "version": "2.2.0",
         "created_by(github)": "Iamthatguytoo",
         "credits": "Character data sourced from Blue Archive Wiki. Retrieved from Blue Archive Wiki Characters page. A big thanks to the Blue Archive Wiki team for their hard work.",
     }

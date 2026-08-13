@@ -1,5 +1,7 @@
 from pydantic import BaseModel, Field, model_validator
+from datetime import datetime
 
+# region GACHA REQUESTS
 class GachaPullPitySimulationRequest(BaseModel):
     simulations: int = Field(..., gt=0, le=1000)
     pyroxene: int = Field(..., ge=120)
@@ -34,7 +36,8 @@ class GachaPullSparkSimulationRequest(BaseModel):
             raise ValueError("featured_rate cannot be greater than three_star_rate")
 
         return self
-    
+
+# region GACHA RESPONSES
 class GachaPullPitySimulationResponse(BaseModel):
     simulations_conducted: int
     pulls_per_trial: int
@@ -78,3 +81,15 @@ class GachaPullSparkSimulationResponse(BaseModel):
     average_two_stars: float
     average_three_stars: float
     example_pull_log: list[str]
+# endregion
+
+
+# region BANNER RESPONSE
+class BannerResponse(BaseModel):
+    banners: list[SingleBannerResponse]
+
+class SingleBannerResponse(BaseModel):
+    name: str
+    start_date: datetime
+    end_date: datetime
+# endregion 

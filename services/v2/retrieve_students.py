@@ -1,5 +1,5 @@
 from db.database_async import student_collection
-from utils.serialize_students import serialize_student
+from utils.serializers import serialize_student
 from schemas.v1.schema import StudentFilter
 import re
 

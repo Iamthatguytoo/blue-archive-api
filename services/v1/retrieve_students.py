@@ -1,6 +1,6 @@
 from db.database import student_collection
 from pydantic import BaseModel
-from utils.serialize_students import serialize_student
+from utils.serializers import serialize_student
 import re
 
 

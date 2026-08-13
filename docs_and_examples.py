@@ -50,6 +50,10 @@ doc_list = {
         "summary": "Calculate the pulls and pyroxene required to reach a target probability of obtaining the rate-up unit",
         "example": {"probability": 0.8, "rate_up": 0.007},
     },
+    "banner": {
+        "response_description": "List of the current banners",
+        "summary": "Returns the banners currently in the database",
+    },
 }
 tags_metadata = [
     {"name": "default", "description": "Basic endpoints for the API itself."},
@@ -59,4 +63,5 @@ tags_metadata = [
         "name": "gacha",
         "description": "Probability calculations, pull target analysis, and Monte Carlo simulations.",
     },
+    {"name": "banners", "description": "Retrieve current banner"},
 ]

@@ -115,8 +115,8 @@ def simulate_odds(
     result = simulate_gacha(
         simulations=all_pulls.simulations,
         pyroxene=all_pulls.pyroxene,
-        rate_up=all_pulls.featured_rate,
-        rate_up_3_star=all_pulls.three_star_rate,
+        rate_up=all_pulls.rate_up,
+        rate_up_3_star=all_pulls.rate_up_3_star,
         pity_threshold=all_pulls.pity_threshold,
         spark_threshold=all_pulls.spark_threshold,
     )

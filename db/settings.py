@@ -10,9 +10,10 @@ class Settings(BaseSettings):
     API_COLLECTION_KEYS: str = "blue_archive_api_secret_keys"
 
     API_COLLECTION_SCRAPER: str
+    API_COLLECTION_BANNER_SCRAPER: str
 
     class Config:
-        env_file = ".env.prod"
+        env_file = ".env.local"
 
 
 settings = Settings()
