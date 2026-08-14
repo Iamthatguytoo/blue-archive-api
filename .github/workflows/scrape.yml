@@ -25,6 +25,7 @@ jobs:
                 ENVIRONMENT: production
                 CLIENT: ${{ secrets.CLIENT }}
                 DATABASE: ${{ secrets.DATABASE }}
+                API_COLLECTION_BANNER_SCRAPER: ${{ secrets.API_COLLECTION_BANNER_SCRAPER }}
                 API_COLLECTION_SCRAPER: ${{ secrets.API_COLLECTION_SCRAPER }}
               run: |
                python -m workers.blue_archive_characters
@@ -49,5 +50,6 @@ jobs:
                 CLIENT: ${{ secrets.CLIENT }}
                 DATABASE: ${{ secrets.DATABASE }}
                 API_COLLECTION_BANNER_SCRAPER: ${{ secrets.API_COLLECTION_BANNER_SCRAPER }}
+                API_COLLECTION_SCRAPER: ${{ secrets.API_COLLECTION_SCRAPER }}
               run: |
                python -m workers.banner_scraper
