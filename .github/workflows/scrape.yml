@@ -82,4 +82,4 @@ jobs:
 
       steps:
         - name: Banner scraper success
-          run: echo "banner_scrape detected new banners"
+          run: echo "student_scrape updated after 2 weeks"
