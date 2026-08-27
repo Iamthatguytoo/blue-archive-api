@@ -8,6 +8,10 @@ on:
 jobs:
     student_scrape:
         runs-on: ubuntu-latest
+
+        outputs:
+          updated: ${{ steps.student_scrape.outputs.updated }}
+
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-python@v4
@@ -21,6 +25,7 @@ jobs:
                   playwright install chromium
             
             - name: Run Student scraper
+              id: student_scrape
               env:
                 ENVIRONMENT: production
                 CLIENT: ${{ secrets.CLIENT }}
@@ -32,6 +37,10 @@ jobs:
 
     banner_scrape:
         runs-on: ubuntu-latest
+
+        outputs:
+          updated: ${{ steps.banner_scraper.outputs.updated }}
+
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-python@v4
@@ -45,6 +54,7 @@ jobs:
                   playwright install chromium
             
             - name: Run Banner scraper
+              id: banner_scraper
               env:
                 ENVIRONMENT: production
                 CLIENT: ${{ secrets.CLIENT }}
@@ -53,3 +63,23 @@ jobs:
                 API_COLLECTION_SCRAPER: ${{ secrets.API_COLLECTION_SCRAPER }}
               run: |
                python -m workers.banner_scraper
+
+    banner_scrape_check:
+      needs: banner_scrape
+      runs-on: ubuntu-latest
+
+      if: needs.banner_scrape.outputs.updated == 'true'
+
+      steps:
+        - name: Banner scraper success
+          run: echo "banner_scrape detected new banners"
+
+    student_scrape_check:
+      needs: student_scrape
+      runs-on: ubuntu-latest
+
+      if: needs.student_scrape.outputs.updated == 'true'
+
+      steps:
+        - name: Banner scraper success
+          run: echo "banner_scrape detected new banners"

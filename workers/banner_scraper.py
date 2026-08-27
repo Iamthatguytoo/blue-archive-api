@@ -4,6 +4,7 @@ from playwright.async_api import async_playwright
 from db.database_async import banner_collection
 from utils.serializers import serialize_banner, normalize_banner_timezone
 from datetime import datetime
+from utils.github_outputs import set_github_output
 
 current_year = datetime.now().year
 
@@ -86,11 +87,14 @@ async def main():
 
     if banners == banner_check:
         print("No new banners detected")
+        set_github_output(name="updated", value="true")
         return
 
     await banner_collection.delete_many({})
     await banner_collection.insert_many(banners)
+
     print("Banner data successfully updated")
+    set_github_output(name="updated", value="false")
 
 if __name__ == "__main__":
     asyncio.run(main())

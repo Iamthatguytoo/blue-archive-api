@@ -3,6 +3,7 @@ import asyncio
 from playwright.async_api import async_playwright
 from db.database_async import student_collection, scraper_collection
 from datetime import datetime, timezone, timedelta
+from utils.github_outputs import set_github_output
 
 pd.set_option("display.max_rows", None)
 pd.set_option("display.max_columns", None)
@@ -43,6 +44,7 @@ async def update_scraper_status(status):
 async def get_characters():
 
     if not await should_scrape():
+        set_github_output(name="updated", value="false")
         return
 
     async with async_playwright() as p:
@@ -134,9 +136,14 @@ async def get_characters():
 
             await update_scraper_status("success")
 
+            set_github_output(name="updated", value="true")
+
         except Exception as e:
             print(f"Scraper failed: {e}")
             await update_scraper_status("failed")
+
+            set_github_output(name="updated", value="false")
+
             raise
 
         finally:

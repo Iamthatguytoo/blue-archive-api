@@ -195,7 +195,7 @@ blue_archive_api/
 
 All student data is sourced from the Blue Archive Wiki community database:
 
-- https://bluearchive.wiki/wiki/Characters
+- https://bluearchive.wiki
 
 Data is transformed into a structured API format with filtering, pagination, and developer-friendly access.
 
