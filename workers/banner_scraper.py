@@ -87,14 +87,14 @@ async def main():
 
     if banners == banner_check:
         print("No new banners detected")
-        set_github_output(name="updated", value="true")
+        set_github_output(name="updated", value="false")
         return
 
     await banner_collection.delete_many({})
     await banner_collection.insert_many(banners)
 
     print("Banner data successfully updated")
-    set_github_output(name="updated", value="false")
+    set_github_output(name="updated", value="true")
 
 if __name__ == "__main__":
     asyncio.run(main())
