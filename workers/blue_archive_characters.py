@@ -73,6 +73,10 @@ async def get_characters():
                 timeout=120000,
             )
 
+            print("Characters:", await page.title())
+            print("Main page:", await page.title())
+            print("URL:", page.url)
+
             all_students = page.locator("table#charactertable")
             await all_students.wait_for(state="visible", timeout=60000)
 
@@ -137,6 +141,16 @@ async def get_characters():
             await update_scraper_status("success")
 
             set_github_output(name="updated", value="true")
+
+            await page.goto(
+                "https://bluearchive.wiki/wiki/Banner_List_(Global)",
+                wait_until="networkidle",
+                timeout=120000,
+            )
+
+            print("Banner Title:", await page.title())
+            print("Banner URL:", page.url)
+            print("Banner Body:", (await page.locator("body").inner_text())[:1000])
 
         except Exception as e:
             print(f"Scraper failed: {e}")
