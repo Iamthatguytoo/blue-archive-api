@@ -27,7 +27,7 @@ async def get_banners():
 
             await page.goto(
                 "https://bluearchive.wiki/wiki/Main_Page",
-                wait_until="networkidle",
+                wait_until="domcontentloaded",
                 timeout=120000,
             )
 
