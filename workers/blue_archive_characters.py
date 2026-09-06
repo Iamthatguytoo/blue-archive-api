@@ -55,13 +55,10 @@ async def get_characters():
         browser = await p.chromium.launch()
 
         try:
-            page = await browser.new_page()
-
-            await page.set_extra_http_headers({
-                "User-Agent": (
-                    "ScraperBot/1.0 (Contact: User:Iamthatguytoo)"
-                )
-            })
+            context = await browser.new_context(
+                user_agent="BlueArchiveAPIBot/1.0 (Miraheze; Contact: User:Iamthatguytoo)"
+            )
+            page = await context.new_page()
 
             await page.goto(
                 "https://bluearchive.wiki/wiki/Characters",

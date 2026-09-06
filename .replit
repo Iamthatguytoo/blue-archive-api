@@ -2,7 +2,7 @@ modules = ["python-3.11"]
 
 [nix]
 channel = "stable-25_05"
-packages = ["gitFull", "glibcLocales", "libxcrypt", "playwright-driver"]
+packages = ["gitFull", "glibcLocales", "libxcrypt", "playwright-driver", "nspr", "nss", "glib", "atk", "at-spi2-atk", "at-spi2-core", "dbus", "xorg.libX11", "xorg.libXcomposite", "xorg.libXdamage", "xorg.libXext", "xorg.libXfixes", "xorg.libXrandr", "xorg.libxcb", "mesa", "libxkbcommon", "alsa-lib", "libgbm"]
 
 hidden = ["tests", ".github", ".pytest_cache"]
 

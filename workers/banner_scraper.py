@@ -15,13 +15,10 @@ async def get_banners():
         browser = await p.chromium.launch()
 
         try:
-            page = await browser.new_page()
-
-            await page.set_extra_http_headers({
-                "User-Agent": (
-                    "ScraperBot/1.0 (Contact: User:Iamthatguytoo)"
-                )
-            })
+            context = await browser.new_context(
+                user_agent="BlueArchiveAPIBot/1.0 (Miraheze; Contact: User:Iamthatguytoo)"
+            )
+            page = await context.new_page()
 
             await page.goto(
                 "https://bluearchive.wiki/wiki/Main_Page",
@@ -85,14 +82,12 @@ async def main():
 
     if banners == banner_check:
         print("No new banners detected")
-        #set_github_output(name="updated", value="false")
         return
 
     await banner_collection.delete_many({})
     await banner_collection.insert_many(banners)
 
     print("Banner data successfully updated")
-    #set_github_output(name="updated", value="true")
 
 if __name__ == "__main__":
     asyncio.run(main())
