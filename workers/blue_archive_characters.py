@@ -43,10 +43,10 @@ async def update_scraper_status(status):
 
 async def get_characters():
 
-    if not await should_scrape():
+    """if not await should_scrape():
         set_github_output(name="updated", value="false")
         return
-
+"""
     async with async_playwright() as p:
         
         await student_collection.create_index(
