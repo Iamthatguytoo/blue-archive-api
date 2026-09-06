@@ -35,6 +35,19 @@ async def get_banners():
 
             banner_frame = all_banners.nth(0)
 
+            print("Current URL:", page.url)
+            print("Page title:", await page.title())
+
+            print(
+                "Banner locator count:",
+                await page.locator("div.tabs-content.tabs-content-2").count()
+            )
+
+            body_text = await page.locator("body").inner_text()
+            print("BODY START:")
+            print(body_text[:2000])
+
+
             text = await banner_frame.inner_text()
 
             banner_list = []
