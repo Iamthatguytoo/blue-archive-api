@@ -4,7 +4,7 @@ from playwright.async_api import async_playwright
 from db.database_async import banner_collection
 from utils.serializers import serialize_banner, normalize_banner_timezone
 from datetime import datetime
-from utils.github_outputs import set_github_output
+
 
 current_year = datetime.now().year
 
@@ -19,9 +19,7 @@ async def get_banners():
 
             await page.set_extra_http_headers({
                 "User-Agent": (
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                    "AppleWebKit/537.36 (KHTML, like Gecko) "
-                    "Chrome/117.0.0.0 Safari/537.36"
+                    "ScraperBot/1.0 (Contact: User:Iamthatguytoo)"
                 )
             })
 
@@ -34,19 +32,6 @@ async def get_banners():
             all_banners = page.locator("div.tabs-content.tabs-content-2")
 
             banner_frame = all_banners.nth(0)
-
-            print("Current URL:", page.url)
-            print("Page title:", await page.title())
-
-            print(
-                "Banner locator count:",
-                await page.locator("div.tabs-content.tabs-content-2").count()
-            )
-
-            body_text = await page.locator("body").inner_text()
-            print("BODY START:")
-            print(body_text[:2000])
-
 
             text = await banner_frame.inner_text()
 
@@ -100,14 +85,14 @@ async def main():
 
     if banners == banner_check:
         print("No new banners detected")
-        set_github_output(name="updated", value="false")
+        #set_github_output(name="updated", value="false")
         return
 
     await banner_collection.delete_many({})
     await banner_collection.insert_many(banners)
 
     print("Banner data successfully updated")
-    set_github_output(name="updated", value="true")
+    #set_github_output(name="updated", value="true")
 
 if __name__ == "__main__":
     asyncio.run(main())

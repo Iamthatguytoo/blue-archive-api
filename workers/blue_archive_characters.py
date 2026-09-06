@@ -3,7 +3,6 @@ import asyncio
 from playwright.async_api import async_playwright
 from db.database_async import student_collection, scraper_collection
 from datetime import datetime, timezone, timedelta
-from utils.github_outputs import set_github_output
 
 pd.set_option("display.max_rows", None)
 pd.set_option("display.max_columns", None)
@@ -43,10 +42,9 @@ async def update_scraper_status(status):
 
 async def get_characters():
 
-    """if not await should_scrape():
-        set_github_output(name="updated", value="false")
+    if not await should_scrape():
         return
-"""
+
     async with async_playwright() as p:
         
         await student_collection.create_index(
@@ -61,9 +59,7 @@ async def get_characters():
 
             await page.set_extra_http_headers({
                 "User-Agent": (
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                    "AppleWebKit/537.36 (KHTML, like Gecko) "
-                    "Chrome/117.0.0.0 Safari/537.36"
+                    "ScraperBot/1.0 (Contact: User:Iamthatguytoo)"
                 )
             })
 
@@ -72,10 +68,6 @@ async def get_characters():
                 wait_until="networkidle",
                 timeout=120000,
             )
-
-            print("Characters:", await page.title())
-            print("Main page:", await page.title())
-            print("URL:", page.url)
 
             all_students = page.locator("table#charactertable")
             await all_students.wait_for(state="visible", timeout=60000)
@@ -140,23 +132,9 @@ async def get_characters():
 
             await update_scraper_status("success")
 
-            set_github_output(name="updated", value="true")
-
-            await page.goto(
-                "https://bluearchive.wiki/wiki/Banner_List_(Global)",
-                wait_until="networkidle",
-                timeout=120000,
-            )
-
-            print("Banner Title:", await page.title())
-            print("Banner URL:", page.url)
-            print("Banner Body:", (await page.locator("body").inner_text())[:1000])
-
         except Exception as e:
             print(f"Scraper failed: {e}")
             await update_scraper_status("failed")
-
-            set_github_output(name="updated", value="false")
 
             raise
 

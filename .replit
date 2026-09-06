@@ -37,6 +37,15 @@ author = 59678616
 task = "workflow.run"
 args = "Run the API(Non-Agent)"
 
+[[workflows.workflow]]
+name = "Run Scraper"
+mode = "sequential"
+author = 59678616
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python -m workers.banner_scraper && python -m workers.blue_archive_characters"
+
 [[ports]]
 localPort = 5000
 externalPort = 80
