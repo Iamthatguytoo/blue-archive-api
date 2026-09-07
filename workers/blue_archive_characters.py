@@ -46,9 +46,9 @@ async def get_characters():
         return
 
     async with async_playwright() as p:
-        
+
         await student_collection.create_index(
-            [("base_name", 1), ("variant", 1)],
+            "wiki_url",
             unique=True,
         )
 
@@ -69,7 +69,8 @@ async def get_characters():
             all_students = page.locator("table#charactertable")
             await all_students.wait_for(state="visible", timeout=60000)
 
-            all_rows = all_students.locator("tr")
+            all_rows = all_students.locator("tr[data-school]")
+
             rows = await all_rows.count()
             print(rows)
 
@@ -78,8 +79,10 @@ async def get_characters():
             for i in range(rows):
                 row = all_rows.nth(i)
 
-                names = await row.locator("td:nth-child(2) a").all_inner_texts()
-                student_name = names[0] if names else "Unknown"
+                name_link = row.locator("td:nth-child(2) a").first
+
+                student_name = await name_link.inner_text()
+                wiki_url = await name_link.get_attribute("href")
 
                 damage_type = await row.get_attribute("data-attack")
                 armor_type = await row.get_attribute("data-armor")
@@ -89,9 +92,11 @@ async def get_characters():
                 position = await row.get_attribute("data-position")
                 pool = await row.get_attribute("data-pool")
                 variant = await row.get_attribute("data-variant")
+
                 urban_terrain = await row.get_attribute("data-urban")
                 outdoor_terrain = await row.get_attribute("data-outdoors")
                 indoor_terrain = await row.get_attribute("data-indoors")
+
                 rarity = await row.get_attribute("data-rarity")
 
                 base_name = student_name.split(" (")[0]
@@ -113,16 +118,18 @@ async def get_characters():
                         "outdoor_terrain": outdoor_terrain,
                         "indoor_terrain": indoor_terrain,
                     },
+                    "wiki_url": wiki_url
                 })
 
-            try:
-                result = await student_collection.insert_many(
-                    student_list,
-                    ordered=False,
+            for student in student_list:
+                await student_collection.update_one(
+                    {"wiki_url": student["wiki_url"]},
+                    {"$set": student},
+                    upsert=True,
                 )
-                print(f"Added {len(result.inserted_ids)} students to your db")
-            except Exception:
-                print("Inserted some students, some duplicates were skipped.")
+
+            print(f"Processed {len(student_list)} students")
+
 
             df = pd.DataFrame(student_list)
             print(df)
