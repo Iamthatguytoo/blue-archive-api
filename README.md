@@ -74,8 +74,7 @@ Each endpoint has a per-IP rate limit:
 blue_archive_api/
 ├── .github/
 │   └── workflows/
-│       ├── pytests.yml
-│       └── scrape.yml
+│       └── pytests.yml
 ├── api/
 │   ├── v1/
 │   │   ├── __init__.py

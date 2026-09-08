@@ -9,6 +9,7 @@ def simulate_gacha_pity(
     three_star_rate: float,
     continue_after_featured: bool,
     pity_threshold: int,
+    include_featured_pull_counts: bool
 ):
     total_pulls = []
     total_natural_featured_results = []
@@ -148,6 +149,7 @@ def simulate_gacha_pity(
         "zero_success": zero_success,
         "max_pulls": max_pulls,
         "min_pulls": min_pulls,
+        "featured_pull_counts": total_featured_pull_counts if include_featured_pull_counts else None,
         "natural_featured_trials_count": natural_featured_count,
         "average_off_banner_3stars": average_off_banner_3stars,
         "all_one_stars": all_one_stars,

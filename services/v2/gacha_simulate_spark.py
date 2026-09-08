@@ -10,6 +10,7 @@ def simulate_gacha_spark(
     continue_after_featured: bool,
     pity_threshold: int,
     spark_threshold: int,
+    include_featured_pull_counts: bool
 ):
     total_pulls = []
     total_natural_featured = []
@@ -156,6 +157,7 @@ def simulate_gacha_spark(
         "spark_rate": spark_rate,
         "max_pulls": max_pulls,
         "min_pulls": min_pulls,
+        "featured_pull_counts": total_featured_pull_counts if include_featured_pull_counts else None,
         "natural_featured_trials_count": natural_featured_count,
         "sparked_featured_trials_count": sparked_featured_count,
         "total_featured_obtained": natural_featured_count + sparked_featured_count,

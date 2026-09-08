@@ -31,18 +31,20 @@ doc_list = {
             "continue_after_featured": True,
             "pity_threshold": 100,
             "spark_threshold": 200,
+            "include_featured_pull_counts": False
         },
     },
     "gacha-simulate-pity": {
             "response_description": "Returns simulation statistics including success rate, average and median pulls to success, pity count, rate-up acquisition count, off-banner 3-star averages, rebate system, and overall pull distribution metrics",
             "summary": "Run Monte Carlo simulations to estimate gacha outcomes, Pity, and pull statistics",
             "example": {
-                "simulations": 100,
-                "pyroxene": 24000,
-                "featured_rate": 0.007,
-                "continue_after_featured": True,
-                "three_star_rate": 0.03,
-                "pity_threshold": 100,
+            "simulations": 100,
+            "pyroxene": 24000,
+            "featured_rate": 0.007,
+            "continue_after_featured": True,
+            "three_star_rate": 0.03,
+            "pity_threshold": 100,
+            "include_featured_pull_counts": False
             },
         },
     "analyze-pulls": {

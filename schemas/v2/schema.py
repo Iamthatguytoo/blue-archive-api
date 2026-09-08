@@ -9,6 +9,7 @@ class GachaPullPitySimulationRequest(BaseModel):
     continue_after_featured: bool = Field(True)
     three_star_rate: float = Field(0.03, gt=0, lt=1)
     pity_threshold: int = Field(100, gt=0)
+    include_featured_pull_counts: bool = False
 
     @model_validator(mode="after")
     def validate_fields(self):
@@ -26,6 +27,7 @@ class GachaPullSparkSimulationRequest(BaseModel):
     continue_after_featured: bool = Field(True)
     pity_threshold: int = Field(100, gt=0)
     spark_threshold: int = Field(200, gt=0)
+    include_featured_pull_counts: bool = False
 
     @model_validator(mode="after")
     def validate_fields(self):
@@ -48,6 +50,7 @@ class GachaPullPitySimulationResponse(BaseModel):
     zero_success: int
     max_pulls: int
     min_pulls: int
+    featured_pull_counts: list[int] | None = None
     natural_featured_trials_count: int
     average_off_banner_3stars: float
     all_one_stars: int
@@ -70,6 +73,7 @@ class GachaPullSparkSimulationResponse(BaseModel):
     spark_rate: float
     max_pulls: int
     min_pulls: int
+    featured_pull_counts: list[int] | None = None
     natural_featured_trials_count: int
     sparked_featured_trials_count: int
     total_featured_obtained: int

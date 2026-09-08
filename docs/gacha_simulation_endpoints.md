@@ -38,7 +38,8 @@ curl -X POST "https://blue-archive-api--JohnArchive.replit.app/v2/gacha-simulate
   "continue_after_featured": true,
   "three_star_rate": 0.03,
   "pity_threshold": 100,
-  "spark_threshold": 200
+  "spark_threshold": 200,
+  "include_featured_pull_counts": false
 }'
 ```
 
@@ -58,7 +59,8 @@ Invoke-WebRequest `
   "continue_after_featured": true,
   "three_star_rate": 0.03,
   "pity_threshold": 100,
-  "spark_threshold": 200
+  "spark_threshold": 200,
+  "include_featured_pull_counts": false
 }'
 ```
 
@@ -75,7 +77,8 @@ res = requests.post(
         "continue_after_featured": True,
         "three_star_rate": 0.03,
         "pity_threshold": 100,
-        "spark_threshold": 200
+        "spark_threshold": 200,
+        "include_featured_pull_counts": False
     }
 )
 print(res.json())
@@ -97,6 +100,7 @@ print(res.json())
   "spark_rate": 1,
   "max_pulls": 200,
   "min_pulls": 2,
+  "featured_pull_counts": null,
   "natural_featured_trials_count": 77,
   "sparked_featured_trials_count": 23,
   "total_featured_obtained": 100,
@@ -135,7 +139,8 @@ curl -X POST "https://blue-archive-api--JohnArchive.replit.app/v2/gacha-simulate
   "featured_rate": 0.007,
   "continue_after_featured": true,
   "three_star_rate": 0.03,
-  "pity_threshold": 100
+  "pity_threshold": 100,
+  "include_featured_pull_counts": false
 }'
 ```
 
@@ -154,7 +159,8 @@ Invoke-WebRequest `
   "featured_rate": 0.007,
   "continue_after_featured": true,
   "three_star_rate": 0.03,
-  "pity_threshold": 100
+  "pity_threshold": 100,
+  "include_featured_pull_counts": false
 }'
 ```
 
@@ -170,7 +176,8 @@ res = requests.post(
         "featured_rate": 0.007,
         "continue_after_featured": True,
         "three_star_rate": 0.03,
-        "pity_threshold": 100
+        "pity_threshold": 100,
+        "include_featured_pull_counts": False
     }
 )
 print(res.json())
@@ -190,6 +197,7 @@ print(res.json())
   "zero_success": 0,
   "max_pulls": 200,
   "min_pulls": 1,
+  "featured_pull_counts": null,
   "natural_featured_trials_count": 89,
   "average_off_banner_3stars": 5.78,
   "all_one_stars": 18843,
@@ -229,6 +237,7 @@ print(res.json())
   | `three_star_rate` | float | Overall 3★ rate (e.g. 0.03 for 3%) |
   | `pity_threshold` | int | Pulls before a guaranteed 3★ (typically 100) |
   | `spark_threshold` | int | (`/v2/gacha-simulate/spark`)Pulls before a guaranteed rate-up (typically 200) |
+  | `include_featured_pull_counts` | bool | Flag whether to return a list of all pull counts for a featured student |
   
   - Output:
 
@@ -250,5 +259,5 @@ print(res.json())
   | `all_one/two/three_stars` | int | Total number of 1★, 2★, and 3★ students obtained across all simulations |
   | `average_one/two/three_stars` | float | Average number of 1★, 2★, and 3★ students obtained per simulation |
   | `example_pull_log` | list[str] | Example results from the first 10-pull batch of the first simulation trial |
-
+  | `featured_pull_counts` | list[int] | Full list of the pull counts where you get the featured student |
 ---

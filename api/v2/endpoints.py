@@ -140,6 +140,7 @@ def simulate_odds_spark(
         continue_after_featured=all_pulls.continue_after_featured,
         pity_threshold=all_pulls.pity_threshold,
         spark_threshold=all_pulls.spark_threshold,
+        include_featured_pull_counts=all_pulls.include_featured_pull_counts,
     )
 
     return GachaPullSparkSimulationResponse(**result)
@@ -168,6 +169,7 @@ def simulate_odds_pity(
         continue_after_featured=all_pulls.continue_after_featured,
         three_star_rate=all_pulls.three_star_rate,
         pity_threshold=all_pulls.pity_threshold,
+        include_featured_pull_counts=all_pulls.include_featured_pull_counts
     )
 
     return GachaPullPitySimulationResponse(**result)
