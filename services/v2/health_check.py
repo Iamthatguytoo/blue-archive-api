@@ -17,7 +17,7 @@ async def create_health_check():
 
         return {
             "status": "healthy",
-            "version": "2.2.0",
+            "version": "2.3.1",
             "uptime": uptime,
             "connection_checks": {
                 "mongodb": True,
@@ -31,7 +31,7 @@ async def create_health_check():
             status_code=503,
             detail={
                 "status": "unhealthy",
-                "version": "2.2.0",
+                "version": "2.3.1",
                 "connection_checks": {
                     "mongodb": False,
                 },
