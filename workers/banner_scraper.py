@@ -25,43 +25,64 @@ async def get_banners():
                 timeout=120000,
             )
 
-            all_banners = page.locator("div.tabs-content.tabs-content-2")
-
-            banner_frame = all_banners.nth(0)
-
-            text = await banner_frame.inner_text()
+            banner_frame = page.locator("div.tabs-content.tabs-content-2").nth(0)
 
             banner_list = []
 
-            for line in text.splitlines():
+            paragraphs = banner_frame.locator("p")
 
-                line = line.replace("\xa0", " ").strip()
+            for i in range(await paragraphs.count()):
 
-                if not line:
+                paragraph = paragraphs.nth(i)
+
+                dates = paragraph.locator("span.datetime")
+
+                if await dates.count() < 2:
                     continue
 
-                match = re.fullmatch( r"^(.*?):\s*" r"(\d{2}/\d{2})\s*[–-]\s*" r"(\d{2}/\d{2})$", line,)
-
-                if not match:
-                    print(f"Skipping: {line!r}")
-                    continue
-
-                name, start_date_str, end_date_str = match.groups()
-
-                start_date = datetime.strptime(f"{start_date_str}/{current_year}", "%m/%d/%Y",)
-
-                end_date = datetime.strptime(f"{end_date_str}/{current_year}", "%m/%d/%Y",)
-
-                if end_date < start_date:
-                    end_date += timedelta(days=365)
-
-                banner_list.append(
-                    {
-                        "name": name,
-                        "start_date": start_date,
-                        "end_date": end_date,
-                    }
+                start_datetime = await dates.nth(0).get_attribute(
+                    "data-datetime"
                 )
+                end_datetime = await dates.nth(1).get_attribute(
+                    "data-datetime"
+                )
+
+                if not start_datetime or not end_datetime:
+                    continue
+
+                start_date = datetime.fromisoformat(
+                    start_datetime.replace("Z", "+00:00")
+                )
+
+                end_date = datetime.fromisoformat(
+                    end_datetime.replace("Z", "+00:00")
+                )
+
+                links = paragraph.locator("a[href^='/wiki/']")
+
+                names = []
+
+                for n in range(await links.count()):
+
+                    link = links.nth(n)
+
+                    name = await link.get_attribute("title")
+
+                    if name and name not in names:
+                        names.append(name)
+
+                if not names:
+                    continue
+
+                for name in names:
+
+                    banner_list.append(
+                        {
+                            "name": name,
+                            "start_date": start_date,
+                            "end_date": end_date,
+                        }
+                    )
 
             return banner_list
 
