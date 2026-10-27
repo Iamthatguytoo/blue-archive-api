@@ -97,9 +97,12 @@ blue_archive_api/
 │   ├── database_async.py
 │   └── settings.py
 ├── middleware/
-│   └── v1/
+│   ├──  v1/
+│   |   ├── __init__.py
+│   |   └── rate_limit.py
+│   └── v2/
 │       ├── __init__.py
-│       └── rate_limit.py
+│       └── cors.py
 ├── schemas/
 │   ├── v1/
 │   │   ├── __init__.py
@@ -168,7 +171,7 @@ blue_archive_api/
 - **FastAPI**: Framework for the API
 - **MongoDB**: Main database
 - **Pytest**: For testing the functions and response codes
-- **GitHub Actions**: CI and scheduled workflows
+- **GitHub Actions**: Continuous Intergration
 - **Replit**: Main deployment platform
 ---
 

@@ -4,6 +4,7 @@ from fastapi.exceptions import RequestValidationError, HTTPException
 from fastapi.encoders import jsonable_encoder
 import uvicorn as uv
 from middleware.v1.rate_limit import setup_ip_rate_limiting
+from middleware.v2.cors import setup_cors
 from docs_and_examples import tags_metadata
 from api.v2.endpoints import blue_archive_api_v2_router
 from docs_and_examples import doc_list
@@ -25,6 +26,8 @@ server = FastAPI(
 
 setup_ip_rate_limiting(server=server)
 
+setup_cors(server=server)
+
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s | %(levelname)s | %(name)s | %(message)s"
 )
@@ -33,7 +36,7 @@ logger = logging.getLogger("blue-archive-api")
 
 ## Global Internal Server Error Handler
 @server.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception):
+async def global_internal_exception_handler(request: Request, exc: Exception):
     logger.exception("Unhandled error")
 
     return JSONResponse(
@@ -43,7 +46,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 ## Global HTTPException Handler
 @server.exception_handler(HTTPException)
-async def global_exception_handler(request: Request, exc: HTTPException):
+async def global_http_exception_handler(request: Request, exc: HTTPException):
     logger.exception(
         "HTTP error: %s %s - %s",
         exc.status_code,
@@ -60,7 +63,7 @@ async def global_exception_handler(request: Request, exc: HTTPException):
         }),
     )
 
-# Global ValidationError Handler
+## Global ValidationError Handler
 @server.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     return JSONResponse(
@@ -75,7 +78,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     )
 
 
-##Log each action middleware
+## Log each action middleware
 @server.middleware("http")
 async def log_request(request: Request, call_next):
     start = time.time()
@@ -93,7 +96,7 @@ async def log_request(request: Request, call_next):
     return response
 
 
-##Basic welcome page endpoint
+## Basic welcome page endpoint
 @server.get(
     "/",
     summary=doc_list["/"]["summary"],
@@ -121,7 +124,7 @@ async def health_check():
     return await create_health_check()
 
 
-##Import the Router(versioned)
+## Import the Router(versioned)
 server.include_router(blue_archive_api_v2_router, prefix="/v2")
 
 if __name__ == "__main__":
