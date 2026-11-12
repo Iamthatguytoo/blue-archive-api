@@ -4,6 +4,12 @@ A Fan-Made FastAPI-based API for querying Blue Archive students (characters) dat
 
 > **Disclaimer:** This is an unofficial fan project. Not affiliated with Nexon, NAT Games, or the Blue Archive Wiki team.
 
+# Announcement
+
+/v2/gacha-simulate/spark is retired.
+
+Please use /v2/gacha-simulate/pity for all future gacha simulations.
+
 ## API Status
 
 
@@ -21,7 +27,7 @@ Server status: online 🟢
 ## Why use this API?
 
 - **Are you planning pulls for a new banner?** Use `/v2/gacha-calculate` to instantly see if your current Pyroxenes are enough to get the rate-up naturally, or whether you'll need to spark.
-- **Are you not sure if you'll need to spark?** `/v2/gacha-simulate/spark` can run up to 1,000 Monte Carlo trial pulls so you can see realistic odds, average pulls to success, and how often sparking is actually needed.
+- **Are you not sure if you'll need to spark?** (retired)`/v2/gacha-simulate/spark` can run up to 1,000 Monte Carlo trial pulls so you can see realistic odds, average pulls to success, and how often sparking is actually needed.
 - **Want to see the effect of the game's pity system?** `/v2/gacha-simulate/pity` can run up to 1,000 Monte Carlo trial pulls to estimate how often you'll naturally obtain the rate-up student, how many pulls it takes on average, and how the new system differs from the old one.
 - **Do you want to know your confidence level?** `/v2/analyze-pulls` works in reverse. You give it a target probability (e.g. 80% chance) and it tells you exactly how many pulls and Pyroxenes you need.
 - **Are you looking for specific students?** `/v2/students` lets you filter by school, weapon, terrain rating, damage type, and more — great for team building tools or wikis.
@@ -62,7 +68,7 @@ Each endpoint has a per-IP rate limit:
 /v2/students                             → 60/minute
 /v2/banners                              → 60/minute
 /v2/gacha-calculate                      → 15/minute
-/v2/gacha-simulate/spark                 → 15/minute
+/v2/gacha-simulate/spark                 → 15/minute (retired)
 /v2/gacha-simulate/pity                  → 15/minute
 /v2/analyze-pulls                        → 30/minute
 ```

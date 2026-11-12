@@ -8,8 +8,6 @@ from schemas.v1.schema import (
     AnalyzePullsResponse,
 )
 from schemas.v2.schema import (
-    GachaPullSparkSimulationRequest,
-    GachaPullSparkSimulationResponse,
     GachaPullPitySimulationRequest,
     GachaPullPitySimulationResponse,
     BannerResponse,
@@ -19,7 +17,6 @@ from auth.v2.create_random_key import generate_key
 from middleware.v1.rate_limit import limiter
 from services.v2.retrieve_students import fetch_students
 from services.v1.gacha_calculate import calculate_gacha
-from services.v2.gacha_simulate_spark import simulate_gacha_spark
 from services.v2.gacha_simulate_pity import simulate_gacha_pity
 from services.v2.retrieve_banners import get_current_banners
 from services.v1.analyze_pulls import pull_target
@@ -113,37 +110,6 @@ def calculate_odds(
 
     result = calculate_gacha(pyroxene=pyroxene.pyroxene, rate_up=pyroxene.rate_up)
     return CalcResponse(**result)
-
-
-##Simulate gacha(spark) endpoint
-@blue_archive_api_v2_router.post(
-    "/gacha-simulate/spark",
-    tags=["gacha"],
-    summary=doc_list["gacha-simulate-spark"]["summary"],
-    response_description=doc_list["gacha-simulate-spark"]["response_description"],
-    response_model=GachaPullSparkSimulationResponse,
-)
-@limiter.limit("15/minute")
-def simulate_odds_spark(
-    request: Request,
-    all_pulls: GachaPullSparkSimulationRequest = Body(
-        example=doc_list["gacha-simulate-spark"]["example"]
-    ),
-    user=Depends(verify_key),
-):
-
-    result = simulate_gacha_spark(
-        simulations=all_pulls.simulations,
-        pyroxene=all_pulls.pyroxene,
-        featured_rate=all_pulls.featured_rate,
-        three_star_rate=all_pulls.three_star_rate,
-        continue_after_featured=all_pulls.continue_after_featured,
-        pity_threshold=all_pulls.pity_threshold,
-        spark_threshold=all_pulls.spark_threshold,
-        include_featured_pull_counts=all_pulls.include_featured_pull_counts,
-    )
-
-    return GachaPullSparkSimulationResponse(**result)
 
 ##Simulate gacha(pity) endpoint
 @blue_archive_api_v2_router.post(

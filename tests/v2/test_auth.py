@@ -27,15 +27,7 @@ async def test_invalid_api_key(monkeypatch):
     assert exc_info.value.detail == "Invalid API key"
 
 
-def test_valid_api_key(client, monkeypatch, fake_students_list):
-    fake_key = {
-        "_id": "123",
-        "hashed_api_key": "test-key",
-        "requests_today": 0,
-        "daily_limit": 10,
-        "resetted_at": datetime.now(timezone.utc).date().isoformat(),
-        "tier": "free",
-    }
+def test_valid_api_key(client, monkeypatch, fake_students_list, fake_key):
 
     async def mock_fake_key(*args, **kwargs):
         return fake_key
@@ -65,15 +57,7 @@ def test_valid_api_key(client, monkeypatch, fake_students_list):
     assert res.json()["students"][0]["name"] == "Arisu"
 
 
-def test_rate_limit_exceeded(client, monkeypatch):
-    fake_key = {
-        "_id": "123",
-        "hashed_api_key": "test-key",
-        "requests_today": 1000,
-        "daily_limit": 1000,
-        "resetted_at": datetime.now(timezone.utc).date().isoformat(),
-        "tier": "free",
-    }
+def test_rate_limit_exceeded(client, monkeypatch, fake_key):
 
     async def mock_fake_key(*args, **kwargs):
         return fake_key

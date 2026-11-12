@@ -79,3 +79,6 @@ docker-compose.yml
 
 #That one outdated test file
 get_request_test.py
+
+# .bat
+*.bat
