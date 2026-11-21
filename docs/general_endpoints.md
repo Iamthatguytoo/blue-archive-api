@@ -1,18 +1,18 @@
 # Register an API key
 
 ```bash
-curl -X POST https://blue-archive-api--JohnArchive.replit.app/v2/auth/register
+curl -X POST https://blue-archive-api-feiu.onrender.com/v2/auth/register
 ```
 
 Windows (PowerShell):
 ```powershell
-Invoke-RestMethod -Method POST -Uri "https://blue-archive-api--JohnArchive.replit.app/v2/auth/register"
+Invoke-RestMethod -Method POST -Uri "https://blue-archive-api-feiu.onrender.com/v2/auth/register"
 ```
 
 Python:
 ```python
 import requests
-res = requests.post("https://blue-archive-api--JohnArchive.replit.app/v2/auth/register")
+res = requests.post("https://blue-archive-api-feiu.onrender.com/v2/auth/register")
 print(res.json())
 ```
 

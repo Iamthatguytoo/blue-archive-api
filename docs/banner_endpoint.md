@@ -2,13 +2,13 @@
 
 ```bash
 curl -H "x-api-key: YOUR_API_KEY" \
-"https://blue-archive-api--JohnArchive.replit.app/v2/banners"
+"https://blue-archive-api-feiu.onrender.com/v2/banners"
 ```
 
 Windows (PowerShell):
 ```powershell
 Invoke-WebRequest `
-  -Uri "https://blue-archive-api--JohnArchive.replit.app/v2/banners" `
+  -Uri "https://blue-archive-api-feiu.onrender.com/v2/banners" `
   -Headers @{ "x-api-key" = "YOUR_API_KEY" }
 ```
 
@@ -16,7 +16,7 @@ Python:
 ```python
 import requests
 res = requests.get(
-    "https://blue-archive-api--JohnArchive.replit.app/v2/banners",
+    "https://blue-archive-api-feiu.onrender.com/v2/banners",
     headers={"x-api-key": "YOUR_API_KEY"}
 )
 print(res.json())

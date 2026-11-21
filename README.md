@@ -10,14 +10,16 @@ A Fan-Made FastAPI-based API for querying Blue Archive students (characters) dat
 
 Please use /v2/gacha-simulate/pity for all future gacha simulations.
 
+Also I'm switching to Render now too.
+
 ## API Status
 
 
-API link: [https://blue-archive-api--JohnArchive.replit.app](https://blue-archive-api--JohnArchive.replit.app)
+API link: [https://blue-archive-api-feiu.onrender.com/](https://blue-archive-api-feiu.onrender.com/)
 
-Docs link: [Swagger UI](https://blue-archive-api--JohnArchive.replit.app/docs)
+Docs link: [Swagger UI](https://blue-archive-api-feiu.onrender.com/docs)
 
-ReDoc link: [ReDoc](https://blue-archive-api--JohnArchive.replit.app/redoc)
+ReDoc link: [ReDoc](https://blue-archive-api-feiu.onrender.com/redoc)
 
 Server status: online 🟢
 
@@ -38,7 +40,7 @@ Server status: online 🟢
 
 **1. Register for a free API key:**
 ```bash
-curl -X POST https://blue-archive-api--JohnArchive.replit.app/v2/auth/register
+curl -X POST https://blue-archive-api-feiu.onrender.com/v2/auth/register
 ```
 
 **2. Save your key** — it's only shown once.
@@ -46,7 +48,7 @@ curl -X POST https://blue-archive-api--JohnArchive.replit.app/v2/auth/register
 **3. Make your first request:**
 ```bash
 curl -H "x-api-key: YOUR_KEY" \
-"https://blue-archive-api--JohnArchive.replit.app/v2/students?name=Hina"
+"https://blue-archive-api-feiu.onrender.com/v2/students?name=Hina"
 ```
 
 ## Features

@@ -82,3 +82,6 @@ get_request_test.py
 
 # .bat
 *.bat
+
+# replit
+.replit

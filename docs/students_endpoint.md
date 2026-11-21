@@ -2,13 +2,13 @@
 
 ```bash
 curl -H "x-api-key: YOUR_KEY" \
-"https://blue-archive-api--JohnArchive.replit.app/v2/students?name=Hina"
+"https://blue-archive-api-feiu.onrender.com/v2/students?name=Hina"
 ```
 
 Windows (PowerShell):
 ```powershell
 Invoke-WebRequest `
-  -Uri "https://blue-archive-api--JohnArchive.replit.app/v2/students?name=Hina" `
+  -Uri "https://blue-archive-api-feiu.onrender.com/v2/students?name=Hina" `
   -Headers @{ "x-api-key" = "YOUR_API_KEY" }
 ```
 
@@ -16,7 +16,7 @@ Python:
 ```python
 import requests
 res = requests.get(
-    "https://blue-archive-api--JohnArchive.replit.app/v2/students",
+    "https://blue-archive-api-feiu.onrender.com/v2/students",
     headers={"x-api-key": "YOUR_API_KEY"},
     params={"name": "Hina"}
 )
@@ -64,19 +64,19 @@ This example fetches back-row Mystic students from Millennium, skips the first t
 
 ```bash
 curl -H "x-api-key: YOUR_API_KEY" \
-"https://blue-archive-api--JohnArchive.replit.app/v2/students?school=millennium&damage_type=mystic&position=back&skip=2&limit=1"
+"https://blue-archive-api-feiu.onrender.com/v2/students?school=millennium&damage_type=mystic&position=back&skip=2&limit=1"
 ```
 Windows (PowerShell):
 ```powershell
 Invoke-WebRequest `
-  -Uri "https://blue-archive-api--JohnArchive.replit.app/v2/students?school=millennium&damage_type=mystic&position=back&skip=2&limit=1" `
+  -Uri "https://blue-archive-api-feiu.onrender.com/v2/students?school=millennium&damage_type=mystic&position=back&skip=2&limit=1" `
   -Headers @{ "x-api-key" = "YOUR_API_KEY" }
 ```
 Python:
 ```python
 import requests
 res = requests.get(
-    "https://blue-archive-api--JohnArchive.replit.app/v2/students",
+    "https://blue-archive-api-feiu.onrender.com/v2/students",
     headers={"x-api-key": "YOUR_API_KEY"},
     params={
         "school": "millennium",

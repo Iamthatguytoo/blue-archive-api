@@ -27,7 +27,7 @@ All probability values use decimal format:
 ```
 
 ```bash
-curl -X POST "https://blue-archive-api--JohnArchive.replit.app/v2/analyze-pulls" \
+curl -X POST "https://blue-archive-api-feiu.onrender.com/v2/analyze-pulls" \
 -H "Content-Type: application/json" \
 -H "x-api-key: YOUR_API_KEY" \
 -d '{
@@ -40,7 +40,7 @@ Windows (PowerShell):
 ```powershell
 Invoke-WebRequest `
 -Method POST `
--Uri "https://blue-archive-api--JohnArchive.replit.app/v2/analyze-pulls" `
+-Uri "https://blue-archive-api-feiu.onrender.com/v2/analyze-pulls" `
 -Headers @{
   "Content-Type" = "application/json"
   "x-api-key" = "YOUR_API_KEY"
@@ -55,7 +55,7 @@ Python:
 ```python
 import requests
 res = requests.post(
-    "https://blue-archive-api--JohnArchive.replit.app/v2/analyze-pulls",
+    "https://blue-archive-api-feiu.onrender.com/v2/analyze-pulls",
     headers={"x-api-key": "YOUR_API_KEY"},
     json={"probability": 0.8, "rate_up": 0.007}
 )
