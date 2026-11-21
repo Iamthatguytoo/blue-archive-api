@@ -20,7 +20,7 @@ server = FastAPI(
         "name": "Iamthatguytoo",
         "url": "https://github.com/Iamthatguytoo",
     },
-    version="2.5.0",
+    version="2.6.1",
     openapi_tags=tags_metadata,
 )
 
@@ -108,7 +108,7 @@ def show_api_working():
         "status": "running",
         "docs": "/docs",
         "redoc": "/redoc",
-        "version": "2.5.0",
+        "version": "2.6.1",
         "created_by(github)": "Iamthatguytoo",
         "credits": "Character data sourced from Blue Archive Wiki. Retrieved from Blue Archive Wiki Characters page. A big thanks to the Blue Archive Wiki team for their hard work.",
     }
